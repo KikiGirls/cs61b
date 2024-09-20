@@ -69,6 +69,7 @@ public class ArrayDeque<T> {
         array = (T[]) new Object[beginsize];
         size = 0;
         index = new DequeIndex();
+        UsageRate = new usageRate();
     }
 
     public ArrayDeque(T item) {
