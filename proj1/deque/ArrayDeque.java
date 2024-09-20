@@ -103,7 +103,7 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }else {
-            T item = this.array[index.IndexArray[0]];
+            T item = this.array[index.IndexArray[0] + 1];
             index.Indexupdate(0, "remove");
             UsageRate.Check();
             return item;
@@ -115,7 +115,7 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }else {
-            T item = this.array[index.IndexArray[1]];
+            T item = this.array[index.IndexArray[1] - 1];
             index.Indexupdate(1, "remove");
             UsageRate.Check();
             return item;
