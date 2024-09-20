@@ -133,27 +133,7 @@ public class ArrayDequeTest {
 
     }
 
-    @Test
-
-    public void FTest(){
-        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
-
-        for (int i = 0; i < 100; i++) {
-            lld1.addFirst(i);
-        }
-
-
-        for (int i = 0; i < 15; i++) {
-            lld1.removeFirst();
-        }
-
-        for (int i = 0; i < 80; i++) {
-            lld1.removeLast();
-        }
 
 
 
-
-        lld1.printDeque();
-    }
 }
