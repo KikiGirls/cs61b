@@ -10,7 +10,6 @@ public class ArrayDeque<T> {
     private T[] array;
     private usageRate UsageRate;  //
 
-
     class usageRate{ //
         private final double minUsageRate = 0.25;  // 最小使用率
         private final double maxUsageRate = 0.80;
@@ -25,13 +24,14 @@ public class ArrayDeque<T> {
         }
         private void sizeUpdate(int newSize){
             T[] newArray =(T[]) new Object[newSize];
-            if (index.IndexArray[0] + size >= array.length ){
+            if (index.IndexArray[0] + size >= array.length - 1){
                 System.arraycopy(array, 0, newArray, 0, index.IndexArray[1]);
-                System.arraycopy(array, index.IndexArray[0]+1, newArray, newSize -array.length -index.IndexArray[0] +1, array.length - 1 - index.IndexArray[0]);
+                System.arraycopy(array, index.IndexArray[0]+1, newArray, (newSize - array.length) + index.IndexArray[0] +1, array.length  -1 - index.IndexArray[0]);
+                index.IndexArray = new int[]{index.IndexArray[0] + (newSize - array.length), index.IndexArray[1]};
             }else {
-                System.arraycopy(array, index.IndexArray[0] + 1, newArray, index.IndexArray[0] + 1, size);
+                System.arraycopy(array, index.IndexArray[0] + 1, newArray, 0, size);
+                index.IndexArray = new int[]{newSize - 1, size};
             }
-            index.IndexArray = new int[]{index.IndexArray[0], index.IndexArray[1] + newSize - array.length};
             array = newArray;
         }
     }
@@ -49,7 +49,7 @@ public class ArrayDeque<T> {
                 case "0remove":
                     IndexArray[index]++;
                     break;
-                case "2add":
+                case "0add":
                 case "1remove":
                     IndexArray[index]--;
                     break;
@@ -103,8 +103,10 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }else {
-            T item = this.array[index.IndexArray[0] + 1];
             index.Indexupdate(0, "remove");
+            size--;
+            T item = array[index.IndexArray[0]];
+            array[index.IndexArray[0]] = null;
             UsageRate.Check();
             return item;
         }
@@ -115,8 +117,10 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }else {
-            T item = this.array[index.IndexArray[1] - 1];
             index.Indexupdate(1, "remove");
+            size--;
+            T item = array[index.IndexArray[1]];
+            array[index.IndexArray[1]] = null;
             UsageRate.Check();
             return item;
         }
@@ -166,15 +170,11 @@ public class ArrayDeque<T> {
                 return currentindex != index.IndexArray[1];
             }
             public T next(){
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }else {
-                    if (currentindex == array.length) {
-                        currentindex = 0;
-                    }
-                    currentindex++;
-                    return array[currentindex - 1];
+                if (currentindex == array.length) {
+                    currentindex = 0;
                 }
+                currentindex++;
+                return array[currentindex - 1];
             }
         }
 }
