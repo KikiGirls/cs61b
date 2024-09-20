@@ -1,10 +1,10 @@
 package deque;
 
-import java.util.Deque;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayDeque<T> {
+public class ArrayDeque<T> implements Deque<T> {
     private int size;
     private DequeIndex index;
     private T[] array;
@@ -77,14 +77,12 @@ public class ArrayDeque<T> {
         this.addFirst(item);
     }
 
+    @Override
     public int size(){
         return this.size;
     }
 
-    public boolean isEmpty(){
-        return this.size == 0;
-    }
-
+    @Override
     public void addFirst(T item) {
         array[index.IndexArray[0]] = item;
         size++;
@@ -92,6 +90,7 @@ public class ArrayDeque<T> {
         UsageRate.Check();
     }
 
+    @Override
     public void addLast(T item) {
         array[index.IndexArray[1]] = item;
         size++;
@@ -99,6 +98,7 @@ public class ArrayDeque<T> {
         UsageRate.Check();
     }
 
+    @Override
     public T removeFirst(){
         if (isEmpty()) {
             return null;
@@ -113,6 +113,7 @@ public class ArrayDeque<T> {
 
     }
 
+    @Override
     public T removeLast(){
         if (isEmpty()) {
             return null;
@@ -127,6 +128,7 @@ public class ArrayDeque<T> {
 
     }
 
+    @Override
     public T get(int index){
         if (index >= this.size) {
             return null;
