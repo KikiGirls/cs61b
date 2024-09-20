@@ -130,7 +130,7 @@ public class ArrayDeque<T> {
     public T get(int index){
         if (index >= this.size) {
             return null;
-        }else if (index + this.index.IndexArray[0] < this.array.length) {
+        }else if (index + this.index.IndexArray[0] + 1  < this.array.length) {
             return this.array[index + this.index.IndexArray[0] +1];
         }else {
             return this.array[index + this.index.IndexArray[0] + 1 - array.length];

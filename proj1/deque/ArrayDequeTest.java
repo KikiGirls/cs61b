@@ -132,7 +132,14 @@ public class ArrayDequeTest {
 
 
     }
-
+    @Test
+    public void smallLLDequeTest() {
+        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        for (int i = 0; i < 10; i++) {
+            lld1.addLast(i);
+        }
+        System.out.println(lld1.get(0));
+    }
 
 
 
