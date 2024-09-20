@@ -3,7 +3,7 @@ package deque;
 import java.util.Iterator;
 
 public class LinkedListDeque<T> implements Deque<T>{
-    public class ListNode {
+    private class ListNode {
         public T item;
         public ListNode prev;
         public ListNode next;
@@ -25,7 +25,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         this.size = 0;
     }
 
-    public LinkedListDeque(T item){
+    /*public LinkedListDeque(T item){
         ListNode items = new ListNode(item);
         sentinel = new ListNode();
         sentinel.next = items;
@@ -33,7 +33,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         items.prev = sentinel;
         items.next = sentinel;
         this.size = 1;
-    }
+    }*/
 
     @Override
     public int size(){
@@ -139,6 +139,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         return equal;
     }
 
+    @Override
     public Iterator<T> iterator(){
         return new DequeIterator();
     }

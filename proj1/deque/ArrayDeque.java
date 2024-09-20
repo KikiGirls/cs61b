@@ -10,7 +10,7 @@ public class ArrayDeque<T> implements Deque<T> {
     private T[] array;
     private usageRate UsageRate;  //
 
-    class usageRate{ //
+    private class usageRate{ //
         private final double minUsageRate = 0.25;  // 最小使用率
         private final double maxUsageRate = 0.80;
 
@@ -36,7 +36,7 @@ public class ArrayDeque<T> implements Deque<T> {
         }
     }
 
-    class DequeIndex{
+    private class DequeIndex{
         public int[] IndexArray;
         public DequeIndex(){
             IndexArray = new int[]{array.length - 1, 0};
@@ -72,10 +72,10 @@ public class ArrayDeque<T> implements Deque<T> {
         UsageRate = new usageRate();
     }
 
-    public ArrayDeque(T item) {
+    /*public ArrayDeque(T item) {
         this();
         this.addFirst(item);
-    }
+    }*/
 
     @Override
     public int size(){
@@ -147,22 +147,37 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println(it.next());
     }
 
-    public boolean equals(Object o){
-        boolean result = false;
-        if (o instanceof ArrayDeque) {
-            ArrayDeque other = (ArrayDeque) o;
-            if (this.size == other.size) {
-                result = true;
-                for (int i = 0; i < this.size; i++) {
-                    if (this.array[i] != other.array[i]) {
-                        result = false;
-                    }
-                }
+    @Override
+    public boolean equals(Object o) {
+        // 先检查是否为同一个引用
+        if (this == o) {
+            return true;
+        }
+
+        // 检查传入对象是否是 ArrayDeque 类型
+        if (!(o instanceof ArrayDeque)) {
+            return false;
+        }
+
+        ArrayDeque<?> other = (ArrayDeque<?>) o;
+
+        // 检查大小是否相等
+        if (this.size != other.size) {
+            return false;
+        }
+
+        // 比较各个元素
+        for (int i = 0; i < this.size; i++) {
+            if (boolean equals(this.array[i], other.array[i])) {
+                return false; // 发现不相等，直接返回 false
             }
         }
-        return result;
+
+        // 所有元素相等，返回 true
+        return true;
     }
 
+    @Override
     public Iterator<T> iterator(){
         return new DequeIterator();
     }
