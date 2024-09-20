@@ -168,7 +168,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
         // 比较各个元素
         for (int i = 0; i < this.size; i++) {
-            if (boolean equals(this.array[i], other.array[i])) {
+            if (this.array[i] == other.array[i]) {
                 return false; // 发现不相等，直接返回 false
             }
         }
