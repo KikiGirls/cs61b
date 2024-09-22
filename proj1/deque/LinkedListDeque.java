@@ -35,12 +35,12 @@ public class LinkedListDeque<T> implements Deque<T>{
         this.size = 1;
     }*/
 
-    @Override
+
     public int size(){
         return size;
     }
 
-    @Override
+
     public void addFirst(T item){
         ListNode addFirstNode = new ListNode(item);
         addFirstNode.next = sentinel.next;
@@ -50,7 +50,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         this.size++;
     }
 
-    @Override
+
     public void addLast(T item){
         ListNode addLastNode = new ListNode(item);
         addLastNode.prev = sentinel.prev;
@@ -60,7 +60,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         this.size++;
     }
 
-    @Override
+
     public T removeFirst(){
         if (isEmpty()) {
             return null;
@@ -73,7 +73,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         }
     }
 
-    @Override
+
     public T removeLast(){
         if (isEmpty()) {
             return null;
@@ -86,7 +86,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         }
     }
 
-    @Override
+
     public T get(int index){
         int getIndex = 0;
         ListNode getIndex_currentNode = sentinel.next;
@@ -117,7 +117,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         return getRecursivehelp.getRecursiveHelp(sentinel.next, index);
     }
 
-    @Override
+
     public boolean equals(Object o){
         boolean equal = false;
         if (o instanceof LinkedListDeque) {
@@ -140,7 +140,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         return equal;
     }
 
-    @Override
+
     public Iterator<T> iterator(){
         return new DequeIterator();
     }

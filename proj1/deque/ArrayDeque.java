@@ -77,12 +77,12 @@ public class ArrayDeque<T> implements Deque<T> {
         this.addFirst(item);
     }*/
 
-    @Override
+
     public int size(){
         return this.size;
     }
 
-    @Override
+
     public void addFirst(T item) {
         array[index.IndexArray[0]] = item;
         size++;
@@ -90,7 +90,7 @@ public class ArrayDeque<T> implements Deque<T> {
         UsageRate.Check();
     }
 
-    @Override
+
     public void addLast(T item) {
         array[index.IndexArray[1]] = item;
         size++;
@@ -98,7 +98,7 @@ public class ArrayDeque<T> implements Deque<T> {
         UsageRate.Check();
     }
 
-    @Override
+
     public T removeFirst(){
         if (isEmpty()) {
             return null;
@@ -113,7 +113,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
     }
 
-    @Override
+
     public T removeLast(){
         if (isEmpty()) {
             return null;
@@ -128,7 +128,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
     }
 
-    @Override
+
     public T get(int index){
         if (index >= this.size) {
             return null;
@@ -147,7 +147,7 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println(it.next());
     }
 
-    @Override
+
     public boolean equals(Object o) {
         // 先检查是否为同一个引用
         if (this == o) {
@@ -177,7 +177,7 @@ public class ArrayDeque<T> implements Deque<T> {
         return true;
     }
 
-    @Override
+    
     public Iterator<T> iterator(){
         return new DequeIterator();
     }
