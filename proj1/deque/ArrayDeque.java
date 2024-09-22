@@ -1,6 +1,8 @@
 package deque;
 
 
+import jdk.internal.classfile.impl.CodeStackTrackerImpl;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -154,13 +156,17 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (this == o) {
             return true;
         }
-
-        // 检查传入对象是否实现了 Deque 接口
-        if (!(o instanceof Deque<?>)) {
+        Deque<?> other;
+        if (o instanceof ArrayDeque<?>) {
+            other = (ArrayDeque<?>) o;
+        }else if (o instanceof LinkedListDeque<?>) {
+            other = (LinkedListDeque<?>) o;
+        }else {
             return false;
         }
+        // 检查传入对象是否实现了 Deque 接口
 
-        Deque<?> other = (Deque<?>) o;
+
 
         // 检查大小是否相等
         if (this.size() != other.size()) {
