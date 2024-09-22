@@ -117,6 +117,7 @@ public class LinkedListDeque<T> implements Deque<T>{
         return getRecursivehelp.getRecursiveHelp(sentinel.next, index);
     }
 
+    @Override
     public boolean equals(Object o){
         boolean equal = false;
         if (o instanceof LinkedListDeque) {
