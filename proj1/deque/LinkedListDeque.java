@@ -1,8 +1,9 @@
 package deque;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class LinkedListDeque<T> implements Deque<T>{
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class ListNode {
         public T item;
         public ListNode prev;
@@ -118,40 +119,59 @@ public class LinkedListDeque<T> implements Deque<T>{
     }
 
 
-    public boolean equals(Object o){
-        boolean equal = false;
-        if (o instanceof LinkedListDeque) {
-            LinkedListDeque<T> other = (LinkedListDeque<T>) o;
-            if (other.size == this.size) {
-                equal = true;
-                ListNode thisNode = sentinel.next;
-                ListNode otherNode = other.sentinel.next;
-                for (int i = 0; i < this.size; i++) {
-                    if (thisNode.item.equals(otherNode.item)) {
-                        thisNode = thisNode.next;
-                        otherNode = otherNode.next;
-                    }else {
-                        equal = false;
-                    }
-                }
-            }
 
+    public boolean equals(Object o) {
+        // 先检查是否为同一个引用
+        if (this == o) {
+            return true;
         }
-        return equal;
+
+        // 检查传入对象是否实现了 Deque 接口
+        if (!(o instanceof Deque<?>)) {
+            return false;
+        }
+
+        Deque<?> other = (Deque<?>) o;
+
+        // 检查大小是否相等
+        if (this.size() != other.size()) {
+            return false;
+        }
+
+        // 比较各个元素
+        Iterator<T> thisIterator = this.iterator();
+        Iterator<?> otherIterator = other.iterator();
+
+        while (thisIterator.hasNext() && otherIterator.hasNext()) {
+            T thisItem = thisIterator.next();
+            Object otherItem = otherIterator.next();
+
+            // 使用 equals() 方法比较元素内容
+            if (!thisItem.equals(otherItem)) {
+                return false;
+            }
+        }
+
+        // 所有元素相等，返回 true
+        return true;
     }
 
-
+    @Override
     public Iterator<T> iterator(){
         return new DequeIterator();
     }
         private class DequeIterator implements Iterator<T>{
             private ListNode current = sentinel.next;
 
+            @Override
             public boolean hasNext(){
-                return current != null;
+                return current != sentinel;
             }
-
+            @Override
             public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
                 T ret = current.item;
                 current = current.next;
                 return ret;

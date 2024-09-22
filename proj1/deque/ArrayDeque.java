@@ -4,7 +4,7 @@ package deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private int size;
     private DequeIndex index;
     private T[] array;
@@ -148,28 +148,36 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
 
+
     public boolean equals(Object o) {
         // 先检查是否为同一个引用
         if (this == o) {
             return true;
         }
 
-        // 检查传入对象是否是 ArrayDeque 类型
-        if (!(o instanceof ArrayDeque)) {
+        // 检查传入对象是否实现了 Deque 接口
+        if (!(o instanceof Deque<?>)) {
             return false;
         }
 
-        ArrayDeque<?> other = (ArrayDeque<?>) o;
+        Deque<?> other = (Deque<?>) o;
 
         // 检查大小是否相等
-        if (this.size != other.size) {
+        if (this.size() != other.size()) {
             return false;
         }
 
         // 比较各个元素
-        for (int i = 0; i < this.size; i++) {
-            if (this.array[i] == other.array[i]) {
-                return false; // 发现不相等，直接返回 false
+        Iterator<T> thisIterator = this.iterator();
+        Iterator<?> otherIterator = other.iterator();
+
+        while (thisIterator.hasNext() && otherIterator.hasNext()) {
+            T thisItem = thisIterator.next();
+            Object otherItem = otherIterator.next();
+
+            // 使用 equals() 方法比较元素内容
+            if (!thisItem.equals(otherItem)) {
+                return false;
             }
         }
 
@@ -177,20 +185,28 @@ public class ArrayDeque<T> implements Deque<T> {
         return true;
     }
 
-    
+    @Override
     public Iterator<T> iterator(){
         return new DequeIterator();
     }
         private class DequeIterator implements Iterator<T>{
             private int currentindex = index.IndexArray[0] + 1;
+            private int count = 0;
+            @Override
             public boolean hasNext(){
-                return currentindex != index.IndexArray[1];
+                return count < size;
             }
+
+            @Override
             public T next(){
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
                 if (currentindex == array.length) {
                     currentindex = 0;
                 }
                 currentindex++;
+                count++;
                 return array[currentindex - 1];
             }
         }
