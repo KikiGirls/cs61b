@@ -120,21 +120,21 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
 
 
+    @Override
     public boolean equals(Object o) {
         // 先检查是否为同一个引用
         if (this == o) {
             return true;
         }
 
-        // 检查传入对象是否实现了 Deque 接口
-        Deque<?> other;
-        if (o instanceof ArrayDeque<?>) {
-            other = (ArrayDeque<?>) o;
-        }else if (o instanceof LinkedListDeque<?>) {
-            other = (LinkedListDeque<?>) o;
-        }else {
+        // 检查传入对象是否是实现了 Deque 且是 Iterable 类型的实例
+        if (!(o instanceof Deque<?> && o instanceof Iterable<?>)) {
             return false;
         }
+
+        // 强制转换为 Deque 和 Iterable
+        Deque<?> other = (Deque<?>) o;
+        Iterable<?> otherIterable = (Iterable<?>) o;
 
         // 检查大小是否相等
         if (this.size() != other.size()) {
@@ -143,7 +143,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
         // 比较各个元素
         Iterator<T> thisIterator = this.iterator();
-        Iterator<?> otherIterator = other.iterator();
+        Iterator<?> otherIterator = otherIterable.iterator();
 
         while (thisIterator.hasNext() && otherIterator.hasNext()) {
             T thisItem = thisIterator.next();
@@ -155,7 +155,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             }
         }
 
-        // 所有元素相等，返回 true
+        // 如果所有元素都相等，返回 true
         return true;
     }
 
