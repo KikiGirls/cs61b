@@ -23,14 +23,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         private void sizeUpdate(int newSize) {
             T[] newArray = (T[]) new Object[newSize];
-            if (dequeIndex.indexArray[0] + size >= array.length - 1)  {
-                System.arraycopy(array, 0, newArray, 0, dequeIndex.indexArray[1]);
-                System.arraycopy(array, dequeIndex.indexArray[0] + 1, newArray, (newSize - array.length)
-                        + dequeIndex.indexArray[0] + 1, array.length  - 1 - dequeIndex.indexArray[0]);
-                dequeIndex.indexArray = new int[]{dequeIndex.indexArray[0]
-                        + (newSize - array.length), dequeIndex.indexArray[1]};
+            int f = dequeIndex.indexArray[0];
+            int s = dequeIndex.indexArray[1];
+            if (f + size >= array.length - 1) {
+                System.arraycopy(array, 0, newArray, 0, s);
+                System.arraycopy(array, f + 1, newArray,
+                        (newSize - array.length) + f + 1, array.length - 1 - f);
+                dequeIndex.indexArray = new int[]{f + (newSize - array.length), s};
             } else {
-                System.arraycopy(array, dequeIndex.indexArray[0] + 1, newArray, 0, size);
+                System.arraycopy(array, f + 1, newArray, 0, size);
                 dequeIndex.indexArray = new int[]{newSize - 1, size};
             }
             array = newArray;

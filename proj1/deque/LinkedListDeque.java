@@ -97,7 +97,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     public T removeLast() {
         if (isEmpty()) {
             return null;
-        }else {
+        } else {
             ListNode removeLastNode = sentinel.getPrev();
             sentinel.setPrev(removeLastNode.getPrev());
             removeLastNode.getPrev().setNext(sentinel);
