@@ -158,8 +158,6 @@ public class LinkedListDeque<T> implements Deque<T>{
             }
 
         }
-
-    @Override
     public void printDeque(){
         ListNode current = sentinel.next;
         for (int i = 0; i < size ; i++) {
