@@ -6,12 +6,14 @@ import java.util.Iterator;
 public class MaxArrayDeque<T> extends ArrayDeque<T> {
     private final Comparator<T> comparator;
 
-    public MaxArrayDeque(Comparator<T> c){
+    public MaxArrayDeque(Comparator<T> c) {
         comparator = c;
     }
 
-    public T max(Comparator<T> c){
-        if (isEmpty()) return null;
+    public T max(Comparator<T> c) {
+        if (isEmpty()) {
+            return null;
+        }
 
         // 初始化为第一个非空元素
         T maxItem = this.get(0);

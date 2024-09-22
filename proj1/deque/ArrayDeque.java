@@ -5,58 +5,62 @@ import java.util.NoSuchElementException;
 
 public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private int size;
-    private DequeIndex index;
+    private DequeIndex dequeIndex;
     private T[] array;
-    private usageRate UsageRate;  //
+    private UsageRate usageRate;  //
 
-    private class usageRate{ //
+    private class UsageRate { //
         private final double minUsageRate = 0.25;  // 最小使用率
         private final double maxUsageRate = 0.80;
 
-        public void Check(){
+        public void check() {
             double currentUsageRate = (double) size / array.length;
-            if (currentUsageRate < minUsageRate && array.length >=16){
+            if (currentUsageRate < minUsageRate && array.length >= 16) {
                 sizeUpdate(array.length / 2);
-            }else if (currentUsageRate > maxUsageRate){
+            } else if (currentUsageRate > maxUsageRate) {
                 sizeUpdate(array.length * 2);
             }
         }
-        private void sizeUpdate(int newSize){
-            T[] newArray =(T[]) new Object[newSize];
-            if (index.IndexArray[0] + size >= array.length - 1){
-                System.arraycopy(array, 0, newArray, 0, index.IndexArray[1]);
-                System.arraycopy(array, index.IndexArray[0]+1, newArray, (newSize - array.length) + index.IndexArray[0] +1, array.length  -1 - index.IndexArray[0]);
-                index.IndexArray = new int[]{index.IndexArray[0] + (newSize - array.length), index.IndexArray[1]};
-            }else {
-                System.arraycopy(array, index.IndexArray[0] + 1, newArray, 0, size);
-                index.IndexArray = new int[]{newSize - 1, size};
+        private void sizeUpdate(int newSize) {
+            T[] newArray = (T[]) new Object[newSize];
+            if (dequeIndex.indexArray[0] + size >= array.length - 1)  {
+                System.arraycopy(array, 0, newArray, 0, dequeIndex.indexArray[1]);
+                System.arraycopy(array, dequeIndex.indexArray[0] + 1, newArray, (newSize - array.length)
+                        + dequeIndex.indexArray[0] + 1, array.length  - 1 - dequeIndex.indexArray[0]);
+                dequeIndex.indexArray = new int[]{dequeIndex.indexArray[0]
+                        + (newSize - array.length), dequeIndex.indexArray[1]};
+            } else {
+                System.arraycopy(array, dequeIndex.indexArray[0] + 1, newArray, 0, size);
+                dequeIndex.indexArray = new int[]{newSize - 1, size};
             }
             array = newArray;
         }
     }
 
-    private class DequeIndex{
-        public int[] IndexArray;
-        public DequeIndex(){
-            IndexArray = new int[]{array.length - 1, 0};
+    private class DequeIndex {
+        private int[] indexArray;
+        DequeIndex() {
+            indexArray = new int[]{array.length - 1, 0};
         }
 
-        public void Indexupdate(int index, String operation){
-            String operation2 = index + operation;
-            switch (operation2){
+        public void indexupdate(int firstLast, String operation) {
+            String operation2 = firstLast + operation;
+            switch (operation2) {
                 case "1add":
                 case "0remove":
-                    IndexArray[index]++;
+                    indexArray[firstLast]++;
                     break;
                 case "0add":
                 case "1remove":
-                    IndexArray[index]--;
+                    indexArray[firstLast]--;
+                    break;
+                default:
                     break;
             }
-            if (IndexArray[index] == - 1) {
-                IndexArray[index] = array.length - 1;
-            }else if (IndexArray[index] == array.length) {
-                IndexArray[index] = 0;
+            if (indexArray[firstLast] == -1) {
+                indexArray[firstLast] = array.length - 1;
+            } else if (indexArray[firstLast] == array.length) {
+                indexArray[firstLast] = 0;
             }
         }
 
@@ -67,8 +71,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         int beginsize = 8;
         array = (T[]) new Object[beginsize];
         size = 0;
-        index = new DequeIndex();
-        UsageRate = new usageRate();
+        dequeIndex = new DequeIndex();
+        usageRate = new UsageRate();
     }
 
     /*public ArrayDeque(T item) {
@@ -77,76 +81,72 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }*/
 
 
-    public int size(){
+    public int size() {
         return this.size;
     }
 
 
     public void addFirst(T item) {
-        array[index.IndexArray[0]] = item;
+        array[dequeIndex.indexArray[0]] = item;
         size++;
-        index.Indexupdate(0, "add");
-        UsageRate.Check();
+        dequeIndex.indexupdate(0, "add");
+        usageRate.check();
     }
 
 
     public void addLast(T item) {
-        array[index.IndexArray[1]] = item;
+        array[dequeIndex.indexArray[1]] = item;
         size++;
-        index.Indexupdate(1, "add");
-        UsageRate.Check();
+        dequeIndex.indexupdate(1, "add");
+        usageRate.check();
     }
 
 
-    public T removeFirst(){
+    public T removeFirst() {
         if (isEmpty()) {
             return null;
-        }else {
-            index.Indexupdate(0, "remove");
+        } else {
+            dequeIndex.indexupdate(0, "remove");
             size--;
-            T item = array[index.IndexArray[0]];
-            array[index.IndexArray[0]] = null;
-            UsageRate.Check();
+            T item = array[dequeIndex.indexArray[0]];
+            array[dequeIndex.indexArray[0]] = null;
+            usageRate.check();
             return item;
         }
 
     }
 
-
-    public T removeLast(){
+    public T removeLast() {
         if (isEmpty()) {
             return null;
-        }else {
-            index.Indexupdate(1, "remove");
+        } else {
+            dequeIndex.indexupdate(1, "remove");
             size--;
-            T item = array[index.IndexArray[1]];
-            array[index.IndexArray[1]] = null;
-            UsageRate.Check();
+            T item = array[dequeIndex.indexArray[1]];
+            array[dequeIndex.indexArray[1]] = null;
+            usageRate.check();
             return item;
         }
 
     }
 
-
-    public T get(int index){
+    public T get(int index) {
         if (index >= this.size) {
             return null;
-        }else if (index + this.index.IndexArray[0] + 1  < this.array.length) {
-            return this.array[index + this.index.IndexArray[0] +1];
-        }else {
-            return this.array[index + this.index.IndexArray[0] + 1 - array.length];
+        } else if (index + this.dequeIndex.indexArray[0] + 1  < this.array.length) {
+            return this.array[index + this.dequeIndex.indexArray[0] + 1];
+        } else {
+            return this.array[index + this.dequeIndex.indexArray[0] + 1 - array.length];
         }
     }
 
-    public void printDeque(){
+    public void printDeque() {
         Iterator<T> it = this.iterator();
         for (int i = 1; i < this.size; i++) {
             System.out.print(it.next() + " ");
         }
         System.out.println(it.next());
     }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -188,29 +188,30 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     @Override
-    public Iterator<T> iterator(){
+    public Iterator<T> iterator() {
         return new DequeIterator();
     }
-        private class DequeIterator implements Iterator<T>{
-            private int currentindex = index.IndexArray[0] + 1;
-            private int count = 0;
-            @Override
-            public boolean hasNext(){
-                return count < size;
-            }
+    private class DequeIterator implements Iterator<T> {
+        private int currentindex = dequeIndex.indexArray[0] + 1;
+        private int count = 0;
 
-            @Override
-            public T next(){
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                if (currentindex == array.length) {
-                    currentindex = 0;
-                }
-                currentindex++;
-                count++;
-                return array[currentindex - 1];
-            }
+        @Override
+        public boolean hasNext() {
+            return count < size;
         }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            if (currentindex == array.length) {
+                currentindex = 0;
+            }
+            currentindex++;
+            count++;
+            return array[currentindex - 1];
+        }
+    }
 }
 

@@ -12,7 +12,7 @@ public interface Deque<T> {
     T get(int index);
     Iterator<T> iterator();
     boolean equals(Object o);
-    default boolean isEmpty(){
+    default boolean isEmpty() {
         return size() == 0;
     }
 }

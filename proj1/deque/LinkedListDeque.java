@@ -5,28 +5,52 @@ import java.util.NoSuchElementException;
 
 public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class ListNode {
-        public T item;
-        public ListNode prev;
-        public ListNode next;
-
+        private T item;
+        private ListNode prev;
+        private ListNode next;
         //构造函数
-        public ListNode(){} //哨兵结点的构造
-        public ListNode(T item){
-            this.item = item;
+        ListNode() {
+        } //哨兵结点的构造
+        ListNode(T item) {
+            this.setItem(item);
         } // 值结点的构造
+
+        private T getItem() {
+            return item;
+        }
+
+        private void setItem(T item) {
+            this.item = item;
+        }
+
+        private ListNode getPrev() {
+            return prev;
+        }
+
+        private void setPrev(ListNode prev) {
+            this.prev = prev;
+        }
+
+        private ListNode getNext() {
+            return next;
+        }
+
+        private void setNext(ListNode next) {
+            this.next = next;
+        }
     }
 
     private ListNode sentinel;
     private int size;
 
-    public LinkedListDeque(){
+    public LinkedListDeque() {
         sentinel = new ListNode();
-        sentinel.next = sentinel;
-        sentinel.prev = sentinel;
+        sentinel.setNext(sentinel);
+        sentinel.setPrev(sentinel);
         this.size = 0;
     }
 
-    /*public LinkedListDeque(T item){
+    /*public LinkedListDeque(T item) {
         ListNode items = new ListNode(item);
         sentinel = new ListNode();
         sentinel.next = items;
@@ -36,69 +60,63 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         this.size = 1;
     }*/
 
-
-    public int size(){
+    public int size() {
         return size;
     }
 
-
-    public void addFirst(T item){
+    public void addFirst(T item) {
         ListNode addFirstNode = new ListNode(item);
-        addFirstNode.next = sentinel.next;
-        addFirstNode.prev = sentinel;
-        sentinel.next.prev = addFirstNode;
-        sentinel.next = addFirstNode;
+        addFirstNode.setNext(sentinel.getNext());
+        addFirstNode.setPrev(sentinel);
+        sentinel.getNext().setPrev(addFirstNode);
+        sentinel.setNext(addFirstNode);
         this.size++;
     }
 
-
-    public void addLast(T item){
+    public void addLast(T item) {
         ListNode addLastNode = new ListNode(item);
-        addLastNode.prev = sentinel.prev;
-        addLastNode.next = sentinel;
-        sentinel.prev.next = addLastNode;
-        sentinel.prev = addLastNode;
+        addLastNode.setPrev(sentinel.getPrev());
+        addLastNode.setNext(sentinel);
+        sentinel.getPrev().setNext(addLastNode);
+        sentinel.setPrev(addLastNode);
         this.size++;
     }
 
-
-    public T removeFirst(){
+    public T removeFirst() {
         if (isEmpty()) {
             return null;
-        }else {
-            ListNode removeFirstNode = sentinel.next;
-            sentinel.next = removeFirstNode.next;
-            removeFirstNode.next.prev = sentinel;
+        } else {
+            ListNode removeFirstNode = sentinel.getNext();
+            sentinel.setNext(removeFirstNode.getNext());
+            removeFirstNode.getNext().setPrev(sentinel);
             this.size--;
-            return removeFirstNode.item;
+            return removeFirstNode.getItem();
         }
     }
 
-
-    public T removeLast(){
+    public T removeLast() {
         if (isEmpty()) {
             return null;
         }else {
-            ListNode removeLastNode = sentinel.prev;
-            sentinel.prev = removeLastNode.prev;
-            removeLastNode.prev.next = sentinel;
+            ListNode removeLastNode = sentinel.getPrev();
+            sentinel.setPrev(removeLastNode.getPrev());
+            removeLastNode.getPrev().setNext(sentinel);
             this.size--;
-            return removeLastNode.item;
+            return removeLastNode.getItem();
         }
     }
 
-
-    public T get(int index){
+    public T get(int index) {
         int getIndex = 0;
-        ListNode getIndex_currentNode = sentinel.next;
+        ListNode getIndexCurrentNode = sentinel.getNext();
         if (index < 0 || index + 1 > size) {
             return null;
-        }else {
+        } else {
             while (getIndex != index) {
-                getIndex_currentNode = getIndex_currentNode.next;
+                getIndexCurrentNode = getIndexCurrentNode.getNext();
                 getIndex++;
             }
-            return getIndex_currentNode.item;
+            return getIndexCurrentNode.getItem();
         }
     }
 
@@ -108,17 +126,15 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
                 if (index < 0 || t == null) {
                     return null;
                 } else if (index == 0) {
-                    return t.item;
-                }else {
-                    return getRecursiveHelp(t.next, index - 1);
+                    return t.getItem();
+                } else {
+                    return getRecursiveHelp(t.getNext(), index - 1);
                 }
             }
         }
         GetRecursiveHelp getRecursivehelp = new GetRecursiveHelp();
-        return getRecursivehelp.getRecursiveHelp(sentinel.next, index);
+        return getRecursivehelp.getRecursiveHelp(sentinel.getNext(), index);
     }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -160,35 +176,34 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     @Override
-    public Iterator<T> iterator(){
+    public Iterator<T> iterator() {
         return new DequeIterator();
     }
-        private class DequeIterator implements Iterator<T>{
-            private ListNode current = sentinel.next;
+    private class DequeIterator implements Iterator<T> {
+        private ListNode current = sentinel.getNext();
 
-            @Override
-            public boolean hasNext(){
-                return current != sentinel;
-            }
-            @Override
-            public T next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                T ret = current.item;
-                current = current.next;
-                return ret;
-            }
-
+        @Override
+        public boolean hasNext() {
+            return current != sentinel;
         }
-    public void printDeque(){
-        ListNode current = sentinel.next;
-        for (int i = 0; i < size ; i++) {
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            T ret = current.getItem();
+            current = current.getNext();
+            return ret;
+        }
+    }
+    public void printDeque() {
+        ListNode current = sentinel.getNext();
+        for (int i = 0; i < size; i++) {
             if (i == size - 1) {
-                System.out.println(current.item);
-            }else {
-                System.out.print(current.item + " ");
-                current = current.next;
+                System.out.println(current.getItem());
+            } else {
+                System.out.print(current.getItem() + " ");
+                current = current.getNext();
             }
         }
     }
