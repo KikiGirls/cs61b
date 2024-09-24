@@ -55,7 +55,7 @@ structure matches the following:
 sp21-s***
   ├── library-sp21
   │    └── ...
-  ├── lab6
+  ├── capers.lab6
   │   ├── capers
   │   ├── testing <==== This should be your CWD
   │   │    ├── runner.py
@@ -63,7 +63,7 @@ sp21-s***
   │   └── ...
   └── ...
 
-Note your CWD must be `sp21-s***/lab6/testing`
+Note your CWD must be `sp21-s***/capers.lab6/testing`
 
 Also check that your REPO_DIR environment variable is the path to your
 `sp21-s***` directory. You can check this by running the command:
