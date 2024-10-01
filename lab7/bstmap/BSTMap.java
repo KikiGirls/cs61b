@@ -61,7 +61,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         throw new UnsupportedOperationException();
     }
 
-    class BSTNode {
+    public void printInOrder(){
+
+
+    }
+    private class BSTNode {
         K key;
         V value;
         BSTNode left, right, parent;
@@ -75,7 +79,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     }
 
-    class BST {
+    private class BST {
         int size;
         private BSTNode root;
         public BST() {
