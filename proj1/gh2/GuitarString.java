@@ -14,6 +14,8 @@ public class GuitarString {
 
     /* Buffer for storing sound data. */
     private Deque<Double> buffer;
+    
+    
 
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
