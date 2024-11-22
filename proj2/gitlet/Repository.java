@@ -45,7 +45,7 @@ public class Repository {
 
 
     /*初始化gitlet*/
-    public static void init() throws IOException {
+    public static void init()  {
 
         setrope();
         creatBranch("master");
@@ -57,7 +57,7 @@ public class Repository {
 //        创建初始分支
     }
 
-    private static void setrope() throws IOException {
+    private static void setrope()  {
         //        检查一下是否存在仓库
         if (GITLET_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
@@ -67,17 +67,21 @@ public class Repository {
 //        创建文件夹初始化仓库
         List<File> dirs = List.of(GITLET_DIR, COMMITS_DIR, STAGES_DIR, HEADS_DIR, BLOBS_DIR, ADD_DIR, REMOVE_DIR);
         dirs.forEach(File::mkdirs);
-        HEAD.createNewFile();
+        try {
+            HEAD.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void addFile2Stage(String[] args) throws IOException {
+    public static void addFile2Stage(String[] args)  {
         String filename = args[1];//args = add [file name]
 
         addFile2Stage(filename);
 
 
     }
-    public static void addFile2Stage(String filename) throws IOException {
+    public static void addFile2Stage(String filename)  {
         File currFile = join(CWD, filename);
         File stagingFile = join(ADD_DIR, filename);
 
@@ -100,19 +104,31 @@ public class Repository {
             if (uid.equals(currFileUid) && stagingFile.exists()) {
                 stagingFile.delete();
             } else if (!uid.equals(currFileUid)) {
-                Files.copy(currFile.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                try {
+                    Files.copy(currFile.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
-            Files.copy(currFile.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            try {
+                Files.copy(currFile.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
-    public static void addFile2Stage(String filename, String blobuid) throws IOException {
+    public static void addFile2Stage(String filename, String blobuid)  {
         File f = join(BLOBS_DIR, blobuid);
         File stagingFile = join(ADD_DIR, filename);
-        Files.copy(f.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        try {
+            Files.copy(f.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void commit(String[] args) throws IOException {
+    public static void commit(String[] args)  {
         String message = args[1];//// args = commit [message]
         if (message.equals("")) {// args = commit
             System.out.println("Please enter a commit message.");
@@ -122,12 +138,12 @@ public class Repository {
         commit.add();
     }
 
-    private static String fileUidInCurrCommit(String filename) throws IOException {
+    private static String fileUidInCurrCommit(String filename)  {
         Commit currCommit = getCurrCommit();
         return currCommit.getBlobs().get(filename);
     }
 
-    private static boolean flieInCurrCommit(String filename) throws IOException {
+    private static boolean flieInCurrCommit(String filename)  {
         Commit currCommit = getCurrCommit();
         return currCommit.getBlobs().containsKey(filename);
     }
@@ -144,15 +160,19 @@ public class Repository {
         }
     }
 
-    public static String creatBlobFromADDstage(String filename) throws IOException {
+    public static String creatBlobFromADDstage(String filename)  {
         File f = join(ADD_DIR, filename);
         String fUid = sha1(readContentsAsString(f));
         File blob = join(BLOBS_DIR, fUid);
-        Files.copy(f.toPath(), blob.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        try {
+            Files.copy(f.toPath(), blob.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return fUid;
     }
 
-    public static void rmFile2Stage(String[] args) throws IOException {
+    public static void rmFile2Stage(String[] args)  {
         String fileName = args[1];//args =rm [file name]
 
         if (fileInAddstage(fileName)) {
@@ -160,7 +180,11 @@ public class Repository {
         } else if (flieInCurrCommit(fileName)) {
             deleteCWDfile(fileName);
             File filetorm = join(REMOVE_DIR, fileName);
-            filetorm.createNewFile();
+            try {
+                filetorm.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             System.out.println("No reason to remove the file.");
             System.exit(0);
@@ -193,7 +217,7 @@ public class Repository {
         return false;
     }
 
-    public static void findCommit(String[] args) throws IOException {
+    public static void findCommit(String[] args)  {
         String message = args[1];//args = find [commit message]
         boolean finded = false;
         List<String> commitList = plainFilenamesIn(COMMITS_DIR);
@@ -213,7 +237,7 @@ public class Repository {
 
     }
 
-    static void checkoutFile(String[] args) throws IOException {
+    static void checkoutFile(String[] args)  {
         //args = checkout -- [file name]
         // 获取头提交中存在的文件版本并将其放入工作目录中，
         // 覆盖已存在的文件版本（如果存在）。该文件的新版本未暂存。
@@ -222,7 +246,7 @@ public class Repository {
         checkoutBlob2CWD(filename, blobuid);
     }
 
-    private static File getBlobFromCurrCommit(String filename) throws IOException {
+    private static File getBlobFromCurrCommit(String filename)  {
         Commit commit = getCurrCommit();
         return getBlobFromCommit(filename, commit);
 
@@ -238,7 +262,7 @@ public class Repository {
         return getBlobByUid(blobUid);
     }
 
-    public static String getBlobUidFromCommit(String filename, Commit commit) throws IOException {
+    public static String getBlobUidFromCommit(String filename, Commit commit)  {
         return commit.getFileUid(filename);
     }
 
@@ -247,7 +271,7 @@ public class Repository {
         return blob;
     }
 
-    public static void checkoutCommitFile(String[] args) throws IOException {
+    public static void checkoutCommitFile(String[] args)  {
 // checkout [commit id] -- [file name]
         // 获取具有给定 id 的提交中存在的文件版本，并将其放入工作目录中，
         // 覆盖已存在的文件版本（如果存在）。该文件的新版本未暂存。
@@ -264,13 +288,17 @@ public class Repository {
 
     }
 
-    public static void checkoutBlob2CWD(String fileName, String blobuid) throws IOException {
+    public static void checkoutBlob2CWD(String fileName, String blobuid)  {
         File blob = getBlobByUid(blobuid);
         File f = join(CWD, fileName);
-        Files.copy(blob.toPath(),f.toPath(),StandardCopyOption.REPLACE_EXISTING);
+        try {
+            Files.copy(blob.toPath(),f.toPath(),StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void checkoutBranch(String[] args) throws IOException {
+    public static void checkoutBranch(String[] args)  {
         //获取给定分支头部提交中的所有文件，并将它们放入工作目录中，覆盖已存在的文件版本（如果存在）。
         // 此外，在此命令结束时，给定分支现在将被视为当前分支 (HEAD)。
         // 当前分支中跟踪但不存在于签出分支中的任何文件都将被删除。
@@ -295,7 +323,7 @@ public class Repository {
         writeContents(HEAD, branchName);
     }
 
-    private static void checkoutAllblobFromCommit2CWD(Commit commit) throws IOException {
+    private static void checkoutAllblobFromCommit2CWD(Commit commit)  {
         Map<String, String> blobs = commit.getBlobs();
         Map<String, String> currCommitBlobs = getBlobsFromCurrCommit();
         List<String> CWDfiles = getCWDFiles();
@@ -355,24 +383,24 @@ public class Repository {
         return CWDfiles;
     }
 
-    private static Map<String, String> getBlobsFromCurrCommit() throws IOException {
+    private static Map<String, String> getBlobsFromCurrCommit()  {
         Commit currCommit = getCurrCommit();
         return currCommit.getBlobs();
     }
 
-    static Commit getCurrCommitInBranch(String branchName) throws IOException {
+    static Commit getCurrCommitInBranch(String branchName)  {
         String commitUid = getCommitUidInBranch(branchName);
         Commit commit = getCommitByUid(commitUid);
         return commit;
     }
 
-    public static String getCommitUidInBranch(String branchName) throws IOException {
+    public static String getCommitUidInBranch(String branchName)  {
         File branchFile = getBranchFileByName(branchName);
         String commitUid = readContentsAsString(branchFile);
         return commitUid;
     }
 
-    public static void reset(String[] args) throws IOException {
+    public static void reset(String[] args)  {
         //args = reset [commit id]
         String commitUid = args[1];
         Commit commit = getCommitByUid(commitUid);

@@ -1,7 +1,5 @@
 package gitlet;
 
-import java.io.IOException;
-
 import static gitlet.Repository.*;
 import static gitlet.branch.*;
 import static gitlet.log.*;
@@ -16,7 +14,7 @@ public class Main {
     /**
      * Usage: java gitlet.Main ARGS, where ARGS contains
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
         if (args.length == 0) {
             System.out.println("Please Enter a command");
             System.exit(0);
@@ -111,7 +109,7 @@ public class Main {
     /**
      * 查看文件
      */
-    public static void checkout(String[] args) throws IOException {
+    public static void checkout(String[] args)  {
         checkinit();
         if (args.length == 3 && args[1].equals("--")) {
             //checkout -- [file name]

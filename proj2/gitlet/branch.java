@@ -10,7 +10,7 @@ import static gitlet.Utils.*;
 
 public class branch {
 
-    public static void creatBranch(String[] args) throws IOException {
+    public static void creatBranch(String[] args)  {
         String branchName = args[1];//args = branch [branch name]
         String uid = getCurrCommit().getuid();
         creatBranch(branchName);
@@ -22,14 +22,14 @@ public class branch {
         writeContents(f,uid);
     }
 
-    public static void setCurrBranchHead(String uid) throws IOException {
+    public static void setCurrBranchHead(String uid)  {
         File currBranchFile = getCurrBranchFile();
         writeContents(currBranchFile, uid);//更新头文件
         setHEAD(getCurrBranchName());
     }
 
 
-    public static void deleteBranch(String[] args) throws IOException {
+    public static void deleteBranch(String[] args)  {
         String branchName = args[1];//args = rm-branch [branch name]
         if (Objects.equals(branchName, getCurrBranchName())){
             System.out.println("Cannot remove the current branch.");
@@ -47,22 +47,26 @@ public class branch {
 
     }
 
-    public static  void  creatBranch(String branchName) throws IOException {
+    public static  void  creatBranch(String branchName)  {
         File branch = join(HEADS_DIR, branchName);
         if (branch.exists()) {
             System.out.println("A branch with that name already exists.");
         }
-        branch.createNewFile();
+        try {
+            branch.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-    public static String getCurrBranchName() throws IOException {
+    public static String getCurrBranchName()  {
         String branchName = readContentsAsString(HEAD);
         return branchName;
     }
 
 
-    public static File getCurrBranchFile() throws IOException {
+    public static File getCurrBranchFile()  {
         String branchName = getCurrBranchName();
         return getBranchFileByName(branchName);
     }
@@ -75,7 +79,7 @@ public class branch {
         return branch;
     }
 
-    public static void mergeBranch(String[] args) throws IOException {
+    public static void mergeBranch(String[] args)  {
         String branchName = args[1];//args = merge [branch name]
 
         if (!stageisNull()) {
@@ -116,7 +120,7 @@ public class branch {
 
     }
 
-//    private static void changeCWD(Commit spc, String branchName) throws IOException {
+//    private static void changeCWD(Commit spc, String branchName)  {
 //        boolean conflict = false;
 //
 //        HashMap<String,String> SP = spc.getBlobs();
@@ -216,7 +220,7 @@ public class branch {
         }
     }
 
-    private static Commit getSplitPointCommit(String branchName, String currBranchName) throws IOException {
+    private static Commit getSplitPointCommit(String branchName, String currBranchName)  {
         // 获取两条分支的 commit 链表
         Vector<String> A = getCommitlinkedList(branchName);
         Vector<String> B = getCommitlinkedList(currBranchName);
@@ -244,7 +248,7 @@ public class branch {
         return getCommitByUid(splitPointUid);
     }
 
-    private static Vector<String> getCommitlinkedList(String branchName) throws IOException {
+    private static Vector<String> getCommitlinkedList(String branchName)  {
         Commit commit = getCurrCommitInBranch(branchName);
         Vector<String> linkedList = new Vector<>();
         while (commit != null) {
@@ -254,7 +258,7 @@ public class branch {
         return linkedList;
     }
 
-    private static void changeCWD(Commit splitPoint, String branchName) throws IOException {
+    private static void changeCWD(Commit splitPoint, String branchName)  {
         boolean conflict = false;
 
         // 获取三个提交的 Blob 映射
@@ -287,7 +291,7 @@ public class branch {
 
     // 处理文件合并逻辑，返回是否发生冲突
     private static boolean handleMergeCases(HashMap<String, String> spBlobs, HashMap<String, String> branchBlobs,
-                                            HashMap<String, String> currBlobs, String fileName) throws IOException {
+                                            HashMap<String, String> currBlobs, String fileName)  {
         boolean conflict = false;
 
         if (spBlobs.containsKey(fileName)) {
@@ -303,7 +307,7 @@ public class branch {
 
     // 处理分裂点存在该文件的情况
     private static boolean handleFileWithSplitPoint(HashMap<String, String> spBlobs, HashMap<String, String> branchBlobs,
-                                                    HashMap<String, String> currBlobs, String fileName) throws IOException {
+                                                    HashMap<String, String> currBlobs, String fileName)  {
         boolean conflict = false;
 
         String spBlob = spBlobs.get(fileName); // 分裂点版本
@@ -353,7 +357,7 @@ public class branch {
 
     // 处理分裂点不存在该文件的情况
     private static boolean handleFileWithoutSplitPoint(HashMap<String, String> branchBlobs,
-                                                       HashMap<String, String> currBlobs, String fileName) throws IOException {
+                                                       HashMap<String, String> currBlobs, String fileName)  {
         boolean conflict = false;
 
         String branchBlob = branchBlobs.get(fileName); // 分支版本

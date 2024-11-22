@@ -1,7 +1,6 @@
 package gitlet;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import static gitlet.Commit.*;
@@ -11,7 +10,7 @@ import static gitlet.branch.getCurrBranchName;
 
 
 public class log {
-    public static void printlog() throws IOException {
+    public static void printlog() {
         Commit commit = getCurrCommit();
         while (commit != null) {
             if (commit.isMergeCommit()){
@@ -23,7 +22,7 @@ public class log {
         }
     }
 
-    public static void printGlobalLog() throws IOException {
+    public static void printGlobalLog() {
         List<String> commitList = plainFilenamesIn(COMMITS_DIR);
         for (String commituid : commitList) {
             Commit commit = getCommitByUid(commituid);
@@ -51,7 +50,7 @@ public class log {
         System.out.println(out);
     }
 
-    public static void printStatus() throws IOException {
+    public static void printStatus() {
         System.out.println("=== Branches ===");
         printBranchName();
         System.out.println("\n=== Staged Files ===");
@@ -62,7 +61,7 @@ public class log {
         System.out.println("\n=== Untracked Files ===");
     }
 
-    private static void printBranchName() throws IOException {
+    private static void printBranchName() {
         System.out.println("*" + getCurrBranchName());
         List<String> filesName = plainFilenamesIn(HEADS_DIR);
         for (String fileName : filesName) {

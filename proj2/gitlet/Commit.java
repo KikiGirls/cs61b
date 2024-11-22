@@ -37,7 +37,7 @@ public class Commit implements Serializable{
 
     /*
     * 创建提交*/
-    public Commit(String message) throws IOException {
+    public Commit(String message)  {
         Commit commit = getCurrCommit();
         this.message = message;
         this.date = new Date();
@@ -47,7 +47,7 @@ public class Commit implements Serializable{
         this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(),parent.toString());
     }
 
-    public Commit(String message, String currBranchName, String branchName) throws IOException {
+    public Commit(String message, String currBranchName, String branchName)  {
         this.message = message;
         this.date = new Date();
         this.parent = new String[2];
@@ -58,7 +58,7 @@ public class Commit implements Serializable{
         this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(),parent.toString());
     }
 
-    private HashMap<String, String> updetaBolbs(HashMap<String, String> currCommitBlobs) throws IOException {
+    private HashMap<String, String> updetaBolbs(HashMap<String, String> currCommitBlobs)  {
         HashMap<String, String> updetaBolbs = currCommitBlobs;
 
         List<String> toAdd = plainFilenamesIn(ADD_DIR);
@@ -96,9 +96,13 @@ public class Commit implements Serializable{
         return formatter.format(zonedDateTime);
     }
 
-    public void add() throws IOException {
+    public void add()  {
         File commitFile = join(COMMITS_DIR, uid);
-        commitFile.createNewFile();
+        try {
+            commitFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         writeObject(commitFile, (Serializable) this);
         setCurrBranchHead(this.uid);
         //写入对象
@@ -119,14 +123,14 @@ public class Commit implements Serializable{
         return date;
     }
 
-    public static Commit getCurrCommit() throws IOException {
+    public static Commit getCurrCommit()  {
         String headCommitName = getCurrCommitName();
         File commitFlie = join(COMMITS_DIR, headCommitName);
         Commit currCommit = readObject(commitFlie, Commit.class);
         return currCommit;
     }
 
-    static String getCurrCommitName() throws IOException {
+    static String getCurrCommitName()  {
         String currBranch = getCurrBranchName();
         String currCommitName = getCommitUidInBranch(currBranch);
         return currCommitName;
@@ -150,7 +154,7 @@ public class Commit implements Serializable{
         return parent;
     }
 
-    public Commit getPrexCommit() throws IOException {
+    public Commit getPrexCommit()  {
 
         String firstParent = parent[0];
         if (parent[0] == null) {
@@ -159,7 +163,7 @@ public class Commit implements Serializable{
         return getCommitByUid(firstParent);
     }
 
-    public static Commit getCommitByUid(String commitUid) throws IOException {
+    public static Commit getCommitByUid(String commitUid)  {
         File commitFlie = join(COMMITS_DIR, commitUid);
         if (!commitFlie.exists()) {
             System.out.println("No commit with that id exists.");
