@@ -39,9 +39,9 @@ public class log {
         String s = commit.getParent()[1].substring(0, 7);
         String out = "==="
                 + "\ncommit " + commit.getuid()
-                + "\nDate: " + dateToTimeStamp(commit.getDate())
                 + "\nMerge: " + f + " " + s
-                + "\n" + commit.getMessage() + "\n";
+                + "\nDate: " + dateToTimeStamp(commit.getDate())
+                + "\n" + commit.getMessage() + "." + "\n";
         System.out.println(out);
     }
 

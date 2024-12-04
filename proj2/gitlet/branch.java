@@ -94,20 +94,20 @@ public class branch {
         }
 
         String currBranchName = getCurrBranchName();
-        if (branchName == currBranchName) {
+        if (Objects.equals(branchName, currBranchName)) {
             System.out.println("Cannot merge a branch with itself.");
             System.exit(0);
         }
 
         Commit SPC = getSplitPointCommit(branchName, currBranchName);
 
-        if (SPC.getuid() == getCurrCommitName()) {
-            setHEAD(branchName);
+        if (Objects.equals(SPC.getuid(), getCurrCommitName())) {
+            checkoutBranch(branchName);
             System.out.println("Current branch fast-forwarded.");
             System.exit(0);
         }
 
-        if (SPC.getuid() == getCommitUidInBranch(branchName)) {
+        if (Objects.equals(SPC.getuid(), getCommitUidInBranch(branchName))) {
             System.out.println("Given branch is an ancestor of the current branch.");
             System.exit(0);
         }
@@ -120,77 +120,77 @@ public class branch {
 
     }
 
-    private static void changeCWD(Commit spc, String branchName)  {
-        boolean conflict = false;
-
-        HashMap<String,String> SP = spc.getBlobs();
-        HashMap<String,String> GB = getCurrCommitInBranch(branchName).getBlobs();
-        HashMap<String,String> CC = getCurrCommit().getBlobs();
-
-        List<String> filesName = ALLfilesName(SP.keySet(),CC.keySet(),GB.keySet());
-
-        for (String fileName : filesName) {
-
-            if (GB.containsKey(fileName) && SP.containsKey(fileName) && GB.get(fileName).equals(SP.get(fileName)) &&
-                    !CC.containsKey(fileName) && CWDhave(fileName)) {
-                error("There is an untracked file in the way; delete it, or add and commit it first.");
-                System.exit(0);}
-
-            if (SP.containsKey(fileName)) {
-                if (GB.containsKey(fileName) && CC.containsKey(fileName)) {
-                    if (GB.get(fileName).equals(CC.get(fileName))) {
-                        addFile2Stage(fileName,GB.get(fileName));
-                        checkoutBlob2CWD(fileName,GB.get(fileName));
-                    } else if (GB.get(fileName).equals(SP.get(fileName))
-                    && !CC.get(fileName).equals(SP.get(fileName))) {
-                        addFile2Stage(fileName,CC.get(fileName));
-                        checkoutBlob2CWD(fileName,CC.get(fileName));
-                    } else if (CC.get(fileName).equals(SP.get(fileName)) &&
-                    !GB.get(fileName).equals(SP.get(fileName))) {
-                        addFile2Stage(fileName,GB.get(fileName));
-                        checkoutBlob2CWD(fileName,GB.get(fileName));
-                    } else if (!CC.get(fileName).equals(GB.get(fileName))) {
-                        replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
-                        addFile2Stage(fileName);
-                        conflict = true;
-                    }
-                } else if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
-                    if (CC.get(fileName).equals(SP.get(fileName))) {
-                        deleteCWDfile(fileName);
-                    } else {
-                        replaceCWDFile(fileName, CC.get(fileName), null);
-                        addFile2Stage(fileName);
-                        conflict = true;
-                    }
-                } else if (!CC.containsKey(fileName) && GB.containsKey(fileName)) {
-                    if (!SP.get(fileName).equals(GB.get(fileName))) {
-                        replaceCWDFile(fileName, null, GB.get(fileName));
-                        addFile2Stage(fileName);
-                        conflict = true;
-                    }
-                }
-            }
-            if (!SP.containsKey(fileName)) {
-                if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
-                    addFile2Stage(fileName,CC.get(fileName));
-                    checkoutBlob2CWD(fileName,CC.get(fileName));
-                } else if (GB.containsKey(fileName) && !CC.containsKey(fileName)) {
-                    addFile2Stage(fileName,GB.get(fileName));
-                    checkoutBlob2CWD(fileName,GB.get(fileName));
-                } else if (!CC.get(fileName).equals(GB.get(fileName))) {
-                    replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
-                    addFile2Stage(fileName);
-                    conflict = true;
-                }
-            }
-
-        }
-
-        if (conflict) {
-            message("Encountered a merge conflict.");
-        }
-
-    }
+//    private static void changeCWD(Commit spc, String branchName)  {
+//        boolean conflict = false;
+//
+//        HashMap<String,String> SP = spc.getBlobs();
+//        HashMap<String,String> GB = getCurrCommitInBranch(branchName).getBlobs();
+//        HashMap<String,String> CC = getCurrCommit().getBlobs();
+//
+//        List<String> filesName = ALLfilesName(SP.keySet(),CC.keySet(),GB.keySet());
+//
+//        for (String fileName : filesName) {
+//
+//            if (GB.containsKey(fileName) && SP.containsKey(fileName) && GB.get(fileName).equals(SP.get(fileName)) &&
+//                    !CC.containsKey(fileName) && CWDhave(fileName)) {
+//                error("There is an untracked file in the way; delete it, or add and commit it first.");
+//                System.exit(0);}
+//
+//            if (SP.containsKey(fileName)) {
+//                if (GB.containsKey(fileName) && CC.containsKey(fileName)) {
+//                    if (GB.get(fileName).equals(CC.get(fileName))) {
+//                        addFile2Stage(fileName,GB.get(fileName));
+//                        checkoutBlob2CWD(fileName,GB.get(fileName));
+//                    } else if (GB.get(fileName).equals(SP.get(fileName))
+//                    && !CC.get(fileName).equals(SP.get(fileName))) {
+//                        addFile2Stage(fileName,CC.get(fileName));
+//                        checkoutBlob2CWD(fileName,CC.get(fileName));
+//                    } else if (CC.get(fileName).equals(SP.get(fileName)) &&
+//                    !GB.get(fileName).equals(SP.get(fileName))) {
+//                        addFile2Stage(fileName,GB.get(fileName));
+//                        checkoutBlob2CWD(fileName,GB.get(fileName));
+//                    } else if (!CC.get(fileName).equals(GB.get(fileName))) {
+//                        replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
+//                        addFile2Stage(fileName);
+//                        conflict = true;
+//                    }
+//                } else if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
+//                    if (CC.get(fileName).equals(SP.get(fileName))) {
+//                        deleteCWDfile(fileName);
+//                    } else {
+//                        replaceCWDFile(fileName, CC.get(fileName), null);
+//                        addFile2Stage(fileName);
+//                        conflict = true;
+//                    }
+//                } else if (!CC.containsKey(fileName) && GB.containsKey(fileName)) {
+//                    if (!SP.get(fileName).equals(GB.get(fileName))) {
+//                        replaceCWDFile(fileName, null, GB.get(fileName));
+//                        addFile2Stage(fileName);
+//                        conflict = true;
+//                    }
+//                }
+//            }
+//            if (!SP.containsKey(fileName)) {
+//                if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
+//                    addFile2Stage(fileName,CC.get(fileName));
+//                    checkoutBlob2CWD(fileName,CC.get(fileName));
+//                } else if (GB.containsKey(fileName) && !CC.containsKey(fileName)) {
+//                    addFile2Stage(fileName,GB.get(fileName));
+//                    checkoutBlob2CWD(fileName,GB.get(fileName));
+//                } else if (!CC.get(fileName).equals(GB.get(fileName))) {
+//                    replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
+//                    addFile2Stage(fileName);
+//                    conflict = true;
+//                }
+//            }
+//
+//        }
+//
+//        if (conflict) {
+//            message("Encountered a merge conflict.");
+//        }
+//
+//    }
 
     private static boolean CWDhave(String fileName) {
         List<String> CWDfiles = plainFilenamesIn(CWD);
@@ -258,36 +258,36 @@ public class branch {
         return linkedList;
     }
 
-//    private static void changeCWD(Commit splitPoint, String branchName)  {
-//        boolean conflict = false;
-//
-//        // 获取三个提交的 Blob 映射
-//        HashMap<String, String> spBlobs = splitPoint.getBlobs(); // 分裂点提交
-//        HashMap<String, String> branchBlobs = getCurrCommitInBranch(branchName).getBlobs(); // 分支当前提交
-//        HashMap<String, String> currBlobs = getCurrCommit().getBlobs(); // 当前分支提交
-//
-//        // 收集所有文件名
-//        List<String> fileNames = collectAllFileNames(spBlobs.keySet(), currBlobs.keySet(), branchBlobs.keySet());
-//
-//        // 遍历所有文件并处理逻辑
-//        for (String fileName : fileNames) {
-//            // 检查是否有未跟踪的冲突文件
-//            if (hasUntrackedConflict(branchBlobs, spBlobs, currBlobs, fileName)) {
-//                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-//                System.exit(0);
-//            }
-//
-//            // 处理合并逻辑，返回是否发生冲突
-//            if (handleMergeCases(spBlobs, branchBlobs, currBlobs, fileName)) {
-//                conflict = true;
-//            }
-//        }
-//
-//        // 如果发生冲突，输出提示信息
-//        if (conflict) {
-//            System.out.println("Encountered a merge conflict.");
-//        }
-//    }
+    private static void changeCWD(Commit splitPoint, String branchName)  {
+        boolean conflict = false;
+
+        // 获取三个提交的 Blob 映射
+        HashMap<String, String> spBlobs = splitPoint.getBlobs(); // 分裂点提交
+        HashMap<String, String> branchBlobs = getCurrCommitInBranch(branchName).getBlobs(); // 分支当前提交
+        HashMap<String, String> currBlobs = getCurrCommit().getBlobs(); // 当前分支提交
+
+        // 收集所有文件名
+        List<String> fileNames = collectAllFileNames(spBlobs.keySet(), currBlobs.keySet(), branchBlobs.keySet());
+
+        // 遍历所有文件并处理逻辑
+        for (String fileName : fileNames) {
+            // 检查是否有未跟踪的冲突文件
+            if (hasUntrackedConflict(branchBlobs, spBlobs, currBlobs, fileName)) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+
+            // 处理合并逻辑，返回是否发生冲突
+            if (handleMergeCases(spBlobs, branchBlobs, currBlobs, fileName)) {
+                conflict = true;
+            }
+        }
+
+        // 如果发生冲突，输出提示信息
+        if (conflict) {
+            System.out.println("Encountered a merge conflict.");
+        }
+    }
 
     // 处理文件合并逻辑，返回是否发生冲突
     private static boolean handleMergeCases(HashMap<String, String> spBlobs, HashMap<String, String> branchBlobs,
@@ -384,11 +384,21 @@ public class branch {
     // 检查是否存在未跟踪文件冲突
     private static boolean hasUntrackedConflict(HashMap<String, String> branchBlobs, HashMap<String, String> spBlobs,
                                                 HashMap<String, String> currBlobs, String fileName) {
-        return branchBlobs.containsKey(fileName) &&
-                spBlobs.containsKey(fileName) &&
-                branchBlobs.get(fileName).equals(spBlobs.get(fileName)) &&
-                !currBlobs.containsKey(fileName) &&
-                CWDhave(fileName);
+        if (!CWDhave(fileName)) {
+            return false;
+        }
+
+        if (currBlobs.containsKey(fileName)) {
+            return false;
+        }
+
+        if (branchBlobs.containsKey(fileName) && !spBlobs.containsKey(fileName)) {
+            return true;
+        }
+
+        return false;
+
+
     }
 
     // 收集所有涉及的文件名

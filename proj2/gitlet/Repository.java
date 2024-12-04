@@ -304,7 +304,11 @@ public class Repository {
         // 当前分支中跟踪但不存在于签出分支中的任何文件都将被删除。
         // 暂存区域将被清除，除非签出的分支是当前分支（请参阅下面的失败案例）。
         String branchName = args[1];//args = checkout [branch name]
+        checkoutBranch(branchName);
 
+    }
+
+public static void checkoutBranch(String branchName) {
         if (Objects.equals(branchName, getCurrBranchName())){
             System.out.println("No need to checkout the current branch.");
             System.exit(0);
