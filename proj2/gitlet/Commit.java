@@ -10,7 +10,7 @@ import java.util.*;
 
 import static gitlet.Repository.*;
 import static gitlet.Utils.*;
-import static gitlet.branch.*;
+import static gitlet.Branch.*;
 
 
 /** Represents a gitlet commit object.
@@ -18,20 +18,21 @@ import static gitlet.branch.*;
  *
  *  @author syWang
  */
-public class Commit implements Serializable{
-    private String message;//信息
-    private Date date;//日期
-    private String[] parent;//父文件
-    private HashMap<String, String> blobs;//文件和他的哈希值
-    private String uid;//提交本身的哈希值
+public class Commit implements Serializable {
+    private String message; //信息
+    private Date date; //日期
+    private String[] parent; //父文件
+    private HashMap<String, String> blobs; //文件和他的哈希值
+    private String uid; //提交本身的哈希值
+    static String u = "shfjjjjjjjjjjjjj";
 
     //初始提交
     public Commit() {
         this.message = "initial commit";
         this.date = new Date(0);
         this.parent = new String[2];
-        this.blobs = new HashMap<String,String>();
-        this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(),parent.toString());
+        this.blobs = new HashMap<String, String>();
+        this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(), parent.toString());
     }
 
 
@@ -44,7 +45,7 @@ public class Commit implements Serializable{
         this.parent = new String[2];
         parent[0] = commit.uid;
         this.blobs = updetaBolbs(commit.getBlobs());
-        this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(),parent.toString());
+        this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(), parent.toString());
     }
 
     public Commit(String message, String currBranchName, String branchName)  {
@@ -55,7 +56,7 @@ public class Commit implements Serializable{
         parent[0] = getCommitUidInBranch(currBranchName);
         parent[1] = getCommitUidInBranch(branchName);
         this.blobs = updetaBolbs(blobs);
-        this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(),parent.toString());
+        this.uid = sha1(message, dateToTimeStamp(date), blobs.toString(), parent.toString());
     }
 
     private HashMap<String, String> updetaBolbs(HashMap<String, String> currCommitBlobs)  {
@@ -107,7 +108,7 @@ public class Commit implements Serializable{
         setCurrBranchHead(this.uid);
         //写入对象
         //
-        }
+    }
 
 
 
@@ -115,7 +116,7 @@ public class Commit implements Serializable{
         return uid;
     }
 
-    public HashMap<String,String> getBlobs() {
+    public HashMap<String, String> getBlobs() {
         return blobs;
     }
 
@@ -161,7 +162,8 @@ public class Commit implements Serializable{
     }
 
     public static Commit getCommitByUid(String commitUid)  {
-        if (commitUid.length() < 40 ) {
+
+        if (commitUid.length() < u.length()) {
             return getCommitByShortUid(commitUid);
         }
         File commitFlie = join(COMMITS_DIR, commitUid);
@@ -195,5 +197,16 @@ public class Commit implements Serializable{
             return null;
         }
         return blobs.get(fileName);
+    }
+
+    public Commit[] getParents() {
+        Commit[] parents = new Commit[2];
+        if (parent[0] != null) {
+            parents[0] = getCommitByUid(parent[0]); // 通过 UID 获取父提交
+        }
+        if (parent[1] != null) {
+            parents[1] = getCommitByUid(parent[1]); // 通过 UID 获取父提交
+        }
+        return parents; // 返回父提交数组
     }
 }

@@ -8,36 +8,36 @@ import static gitlet.Commit.*;
 import static gitlet.Repository.*;
 import static gitlet.Utils.*;
 
-public class branch {
+public class Branch {
 
     public static void creatBranch(String[] args)  {
-        String branchName = args[1];//args = branch [branch name]
+        String branchName = args[1]; //args = branch [branch name]
         String uid = getCurrCommit().getuid();
         creatBranch(branchName);
-        setBranchHead(branchName,uid);
+        setBranchHead(branchName, uid);
     }
 
     private static void setBranchHead(String branchName, String uid) {
         File f = join(HEADS_DIR, branchName);
-        writeContents(f,uid);
+        writeContents(f, uid);
     }
 
     public static void setCurrBranchHead(String uid)  {
         File currBranchFile = getCurrBranchFile();
-        writeContents(currBranchFile, uid);//更新头文件
+        writeContents(currBranchFile, uid); //更新头文件
         setHEAD(getCurrBranchName());
     }
 
 
     public static void deleteBranch(String[] args)  {
-        String branchName = args[1];//args = rm-branch [branch name]
-        if (Objects.equals(branchName, getCurrBranchName())){
+        String branchName = args[1]; //args = rm-branch [branch name]
+        if (Objects.equals(branchName, getCurrBranchName())) {
             System.out.println("Cannot remove the current branch.");
             System.exit(0);
         }
 
         File f = getBranchFileByName(branchName);
-        if (f == null){
+        if (f == null) {
             System.out.println("A branch with that name does not exist.");
             System.exit(0);
         } else {
@@ -80,7 +80,7 @@ public class branch {
     }
 
     public static void mergeBranch(String[] args)  {
-        String branchName = args[1];//args = merge [branch name]
+        String branchName = args[1]; //args = merge [branch name]
 
         if (!stageisNull()) {
             System.out.println("You have uncommitted changes.");
@@ -99,114 +99,118 @@ public class branch {
             System.exit(0);
         }
 
-        Commit SPC = getSplitPointCommit(branchName, currBranchName);
+        Commit spc = getSplitPointCommit(branchName, currBranchName);
 
-        if (Objects.equals(SPC.getuid(), getCurrCommitName())) {
+        if (Objects.equals(spc.getuid(), getCurrCommitName())) {
             checkoutBranch(branchName);
             System.out.println("Current branch fast-forwarded.");
             System.exit(0);
         }
 
-        if (Objects.equals(SPC.getuid(), getCommitUidInBranch(branchName))) {
+        if (Objects.equals(spc.getuid(), getCommitUidInBranch(branchName))) {
             System.out.println("Given branch is an ancestor of the current branch.");
             System.exit(0);
         }
 
-        changeCWD(SPC, branchName);
+        changeCWD(spc, branchName);
 
-        String messsgae = "Merged " + branchName +" into "+ getCurrBranchName();
+        String messsgae = "Merged " + branchName + " into " + getCurrBranchName();
         Commit commit = new Commit(messsgae, currBranchName, branchName);
         commit.add();
 
     }
 
-//    private static void changeCWD(Commit spc, String branchName)  {
-//        boolean conflict = false;
-//
-//        HashMap<String,String> SP = spc.getBlobs();
-//        HashMap<String,String> GB = getCurrCommitInBranch(branchName).getBlobs();
-//        HashMap<String,String> CC = getCurrCommit().getBlobs();
-//
-//        List<String> filesName = ALLfilesName(SP.keySet(),CC.keySet(),GB.keySet());
-//
-//        for (String fileName : filesName) {
-//
-//            if (GB.containsKey(fileName) && SP.containsKey(fileName) && GB.get(fileName).equals(SP.get(fileName)) &&
-//                    !CC.containsKey(fileName) && CWDhave(fileName)) {
-//                error("There is an untracked file in the way; delete it, or add and commit it first.");
-//                System.exit(0);}
-//
-//            if (SP.containsKey(fileName)) {
-//                if (GB.containsKey(fileName) && CC.containsKey(fileName)) {
-//                    if (GB.get(fileName).equals(CC.get(fileName))) {
-//                        addFile2Stage(fileName,GB.get(fileName));
-//                        checkoutBlob2CWD(fileName,GB.get(fileName));
-//                    } else if (GB.get(fileName).equals(SP.get(fileName))
-//                    && !CC.get(fileName).equals(SP.get(fileName))) {
-//                        addFile2Stage(fileName,CC.get(fileName));
-//                        checkoutBlob2CWD(fileName,CC.get(fileName));
-//                    } else if (CC.get(fileName).equals(SP.get(fileName)) &&
-//                    !GB.get(fileName).equals(SP.get(fileName))) {
-//                        addFile2Stage(fileName,GB.get(fileName));
-//                        checkoutBlob2CWD(fileName,GB.get(fileName));
-//                    } else if (!CC.get(fileName).equals(GB.get(fileName))) {
-//                        replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
-//                        addFile2Stage(fileName);
-//                        conflict = true;
-//                    }
-//                } else if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
-//                    if (CC.get(fileName).equals(SP.get(fileName))) {
-//                        deleteCWDfile(fileName);
-//                    } else {
-//                        replaceCWDFile(fileName, CC.get(fileName), null);
-//                        addFile2Stage(fileName);
-//                        conflict = true;
-//                    }
-//                } else if (!CC.containsKey(fileName) && GB.containsKey(fileName)) {
-//                    if (!SP.get(fileName).equals(GB.get(fileName))) {
-//                        replaceCWDFile(fileName, null, GB.get(fileName));
-//                        addFile2Stage(fileName);
-//                        conflict = true;
-//                    }
-//                }
-//            }
-//            if (!SP.containsKey(fileName)) {
-//                if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
-//                    addFile2Stage(fileName,CC.get(fileName));
-//                    checkoutBlob2CWD(fileName,CC.get(fileName));
-//                } else if (GB.containsKey(fileName) && !CC.containsKey(fileName)) {
-//                    addFile2Stage(fileName,GB.get(fileName));
-//                    checkoutBlob2CWD(fileName,GB.get(fileName));
-//                } else if (!CC.get(fileName).equals(GB.get(fileName))) {
-//                    replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
-//                    addFile2Stage(fileName);
-//                    conflict = true;
-//                }
-//            }
-//
-//        }
-//
-//        if (conflict) {
-//            message("Encountered a merge conflict.");
-//        }
-//
-//    }
+    //    private static void changeCWD(Commit spc, String branchName)  {
+    //        boolean conflict = false;
+    //
+    //        HashMap<String,String> SP = spc.getBlobs();
+    //        HashMap<String,String> GB = getCurrCommitInBranch(branchName).getBlobs();
+    //        HashMap<String,String> CC = getCurrCommit().getBlobs();
+    //
+    //        List<String> filesName = ALLfilesName(SP.keySet(),CC.keySet(),GB.keySet());
+    //
+    //        for (String fileName : filesName) {
+    //
+    //            if (GB.containsKey(fileName) && SP.containsKey(fileName)
+    //            && GB.get(fileName).equals(SP.get(fileName)) &&
+    //                    !CC.containsKey(fileName) && CWDhave(fileName)) {
+    //                error("There is an untracked file in the way; delete it, or add and commit it first.");
+    //                System.exit(0);}
+    //
+    //            if (SP.containsKey(fileName)) {
+    //                if (GB.containsKey(fileName) && CC.containsKey(fileName)) {
+    //                    if (GB.get(fileName).equals(CC.get(fileName))) {
+    //                        addFile2Stage(fileName,GB.get(fileName));
+    //                        checkoutBlob2CWD(fileName,GB.get(fileName));
+    //                    } else if (GB.get(fileName).equals(SP.get(fileName))
+    //                    && !CC.get(fileName).equals(SP.get(fileName))) {
+    //                        addFile2Stage(fileName,CC.get(fileName));
+    //                        checkoutBlob2CWD(fileName,CC.get(fileName));
+    //                    } else if (CC.get(fileName).equals(SP.get(fileName)) &&
+    //                    !GB.get(fileName).equals(SP.get(fileName))) {
+    //                        addFile2Stage(fileName,GB.get(fileName));
+    //                        checkoutBlob2CWD(fileName,GB.get(fileName));
+    //                    } else if (!CC.get(fileName).equals(GB.get(fileName))) {
+    //                        replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
+    //                        addFile2Stage(fileName);
+    //                        conflict = true;
+    //                    }
+    //                } else if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
+    //                    if (CC.get(fileName).equals(SP.get(fileName))) {
+    //                        deleteCWDfile(fileName);
+    //                    } else {
+    //                        replaceCWDFile(fileName, CC.get(fileName), null);
+    //                        addFile2Stage(fileName);
+    //                        conflict = true;
+    //                    }
+    //                } else if (!CC.containsKey(fileName) && GB.containsKey(fileName)) {
+    //                    if (!SP.get(fileName).equals(GB.get(fileName))) {
+    //                        replaceCWDFile(fileName, null, GB.get(fileName));
+    //                        addFile2Stage(fileName);
+    //                        conflict = true;
+    //                    }
+    //                }
+    //            }
+    //            if (!SP.containsKey(fileName)) {
+    //                if (!GB.containsKey(fileName) && CC.containsKey(fileName)) {
+    //                    addFile2Stage(fileName,CC.get(fileName));
+    //                    checkoutBlob2CWD(fileName,CC.get(fileName));
+    //                } else if (GB.containsKey(fileName) && !CC.containsKey(fileName)) {
+    //                    addFile2Stage(fileName,GB.get(fileName));
+    //                    checkoutBlob2CWD(fileName,GB.get(fileName));
+    //                } else if (!CC.get(fileName).equals(GB.get(fileName))) {
+    //                    replaceCWDFile(fileName, CC.get(fileName), GB.get(fileName));
+    //                    addFile2Stage(fileName);
+    //                    conflict = true;
+    //                }
+    //            }
+    //
+    //        }
+    //
+    //        if (conflict) {
+    //            message("Encountered a merge conflict.");
+    //        }
+    //
+    //    }
 
-    private static boolean CWDhave(String fileName) {
-        List<String> CWDfiles = plainFilenamesIn(CWD);
-        return CWDfiles.contains(fileName);
+    private static boolean cwdhave(String fileName) {
+        List<String> cwdfiles = plainFilenamesIn(CWD);
+        return cwdfiles.contains(fileName);
     }
 
-    private static void replaceCWDFile(String flieName ,String blobuid1, String blobuid2) {
+    private static void replaceCWDFile(String flieName, String blobuid1, String blobuid2) {
         String a = stringblob(blobuid1);
         String b = stringblob(blobuid2);
-        String c = "<<<<<<< HEAD\n" +
-                a + // HEAD 的内容紧跟在标志后
-                "=======\n" +
-                b + // 对方分支内容紧跟在标志后
+        String c = "<<<<<<< HEAD\n"
+                + a
+                + // HEAD 的内容紧跟在标志后
+                "=======\n"
+                +
+                b
+                + // 对方分支内容紧跟在标志后
                 ">>>>>>>\n";
         File f = join(CWD, flieName);
-        writeContents(f,c);
+        writeContents(f, c);
 
     }
 
@@ -214,40 +218,80 @@ public class branch {
         if (blobuid2 == null) {
             return "";
 
-        }else {
+        } else {
             File blob = getBlobByUid(blobuid2);
             return readContentsAsString(blob).stripTrailing() + "\n";
         }
     }
 
-    private static Commit getSplitPointCommit(String branchName, String currBranchName)  {
-        // 获取两条分支的 commit 链表
-        Vector<String> A = getCommitlinkedList(branchName);
-        Vector<String> B = getCommitlinkedList(currBranchName);
+    //    private static Commit getSplitPointCommit(String branchName, String currBranchName)  {
+    //        // 获取两条分支的 commit 链表
+    //        Vector<String> A = getCommitlinkedList(branchName);
+    //        Vector<String> B = getCommitlinkedList(currBranchName);
+    //
+    //        // 找公共祖先
+    //        String splitPointUid = null;
+    //        int i = 0;
+    //        while (i < A.size() && i < B.size()) {
+    //            String commitA = A.get(A.size() - 1 - i); // 从尾部向前遍历
+    //            String commitB = B.get(B.size() - 1 - i); // 从尾部向前遍历
+    //            if (Objects.equals(commitA, commitB)) {
+    //                splitPointUid = commitA; // 更新公共祖先
+    //            } else {
+    //                break; // 一旦不同就停止
+    //            }
+    //            i++;
+    //        }
+    //
+    //        // 如果没有公共祖先，返回 null 或抛出异常
+    //        if (splitPointUid == null) {
+    //            System.out.println("No common ancestor found between branches.");
+    //            System.exit(0);
+    //        }
+    //
+    //        return getCommitByUid(splitPointUid);
+    //    }
 
-        // 找公共祖先
-        String splitPointUid = null;
-        int i = 0;
-        while (i < A.size() && i < B.size()) {
-            String commitA = A.get(A.size() - 1 - i); // 从尾部向前遍历
-            String commitB = B.get(B.size() - 1 - i); // 从尾部向前遍历
-            if (Objects.equals(commitA, commitB)) {
-                splitPointUid = commitA; // 更新公共祖先
-            } else {
-                break; // 一旦不同就停止
+    private static Commit getSplitPointCommit(String branchName, String currBranchName) {
+        // 用于存储第一个分支的所有访问过的提交
+        Set<String> visited = new HashSet<>();
+
+        // 遍历第一个分支，记录所有提交 UID
+        Queue<Commit> queue = new LinkedList<>();
+        queue.add(getCurrCommitInBranch(branchName));
+        while (!queue.isEmpty()) {
+            Commit commit = queue.poll();
+            if (commit == null) {
+                continue;
             }
-            i++;
+            visited.add(commit.getuid()); // 将提交的 UID 添加到集合
+            for (Commit parent : commit.getParents()) { // 遍历所有父提交
+                if (parent != null && !visited.contains(parent.getuid())) {
+                    queue.add(parent);
+                }
+            }
         }
 
-        // 如果没有公共祖先，返回 null 或抛出异常
-        if (splitPointUid == null) {
-            System.out.println("No common ancestor found between branches.");
-            System.exit(0);
+        // 遍历第二个分支，找到第一个公共祖先
+        queue.add(getCurrCommitInBranch(currBranchName));
+        while (!queue.isEmpty()) {
+            Commit commit = queue.poll();
+            if (commit == null) {
+                continue;
+            }
+            if (visited.contains(commit.getuid())) {
+                return commit; // 找到第一个公共祖先
+            }
+            for (Commit parent : commit.getParents()) { // 遍历所有父提交
+                if (parent != null) {
+                    queue.add(parent);
+                }
+            }
         }
 
-        return getCommitByUid(splitPointUid);
+        // 如果未找到公共祖先，抛出异常
+        throw new IllegalArgumentException("No common ancestor found between branches.");
     }
-
     private static Vector<String> getCommitlinkedList(String branchName)  {
         Commit commit = getCurrCommitInBranch(branchName);
         Vector<String> linkedList = new Vector<>();
@@ -306,8 +350,11 @@ public class branch {
     }
 
     // 处理分裂点存在该文件的情况
-    private static boolean handleFileWithSplitPoint(HashMap<String, String> spBlobs, HashMap<String, String> branchBlobs,
-                                                    HashMap<String, String> currBlobs, String fileName)  {
+    private static boolean
+        handleFileWithSplitPoint(HashMap<String, String> spBlobs,
+                                 HashMap<String, String> branchBlobs,
+                                 HashMap<String, String> currBlobs,
+                                 String fileName) {
         boolean conflict = false;
 
         String spBlob = spBlobs.get(fileName); // 分裂点版本
@@ -384,7 +431,7 @@ public class branch {
     // 检查是否存在未跟踪文件冲突
     private static boolean hasUntrackedConflict(HashMap<String, String> branchBlobs, HashMap<String, String> spBlobs,
                                                 HashMap<String, String> currBlobs, String fileName) {
-        if (!CWDhave(fileName)) {
+        if (!cwdhave(fileName)) {
             return false;
         }
 

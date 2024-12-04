@@ -9,14 +9,14 @@ import java.util.Set;
 import static gitlet.Commit.*;
 import static gitlet.Repository.*;
 import static gitlet.Utils.plainFilenamesIn;
-import static gitlet.branch.getCurrBranchName;
+import static gitlet.Branch.getCurrBranchName;
 
 
-public class log {
+public class Log {
     public static void printlog() {
         Commit commit = getCurrCommit();
         while (commit != null) {
-            if (commit.isMergeCommit()){
+            if (commit.isMergeCommit()) {
                 printMergeCommit(commit);
             } else {
                 printCommit(commit);
@@ -37,19 +37,15 @@ public class log {
     private static void printMergeCommit(Commit commit) {
         String f = commit.getParent()[0].substring(0, 7);
         String s = commit.getParent()[1].substring(0, 7);
-        String out = "==="
-                + "\ncommit " + commit.getuid()
-                + "\nMerge: " + f + " " + s
-                + "\nDate: " + dateToTimeStamp(commit.getDate())
+        String out = "===" + "\ncommit " + commit.getuid() + "\nMerge: "
+                + f + " " + s + "\nDate: " + dateToTimeStamp(commit.getDate())
                 + "\n" + commit.getMessage() + "." + "\n";
         System.out.println(out);
     }
 
     private static void printCommit(Commit commit) {
-        String out = "==="
-                + "\ncommit " + commit.getuid()
-                + "\nDate: " + dateToTimeStamp(commit.getDate())
-                + "\n" + commit.getMessage() + "\n";
+        String out = "===" + "\ncommit " + commit.getuid() + "\nDate: "
+                + dateToTimeStamp(commit.getDate()) + "\n" + commit.getMessage() + "\n";
         System.out.println(out);
     }
 
@@ -106,14 +102,14 @@ public class log {
         }
     }
 
-    private static void printFilesNameIn(File Dir) {
-        List<String> filesName = plainFilenamesIn(Dir);
+    private static void printFilesNameIn(File dir) {
+        List<String> filesName = plainFilenamesIn(dir);
         printFilesNameInList(filesName);
     }
 
     private static void printFilesNameInList(List<String> filesName) {
-        for (String fileName : filesName) {
-            System.out.println(fileName);
+        for (String filname : filesName) {
+            System.out.println(filname);
         }
     }
 }

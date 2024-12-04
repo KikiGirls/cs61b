@@ -1,8 +1,8 @@
 package gitlet;
 
 import static gitlet.Repository.*;
-import static gitlet.branch.*;
-import static gitlet.log.*;
+import static gitlet.Branch.*;
+import static gitlet.Log.*;
 
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
@@ -23,11 +23,11 @@ public class Main {
 
         switch (firstArg) {
             case "init":
-                checkNumOfArgs(args, 1);//args = init
+                checkNumOfArgs(args, 1); //args = init
                 init();
                 break;
             case "add":
-                checkNumOfArgs(args, 2);//args = add [file name]
+                checkNumOfArgs(args, 2); //args = add [file name]
                 addFile2Stage(args);
                 break;
             case "commit":
@@ -38,27 +38,27 @@ public class Main {
                 commit(args);
                 break;
             case "log":
-                checkNumOfArgs(args, 1);//args = log
+                checkNumOfArgs(args, 1); //args = log
                 printlog();
                 break;
             case "find":
-                checkNumOfArgs(args, 2);//args = find [commit message]
+                checkNumOfArgs(args, 2); //args = find [commit message]
                 findCommit(args);
                 break;
             case "rm":
-                checkNumOfArgs(args, 2);//args = rm [file name]
+                checkNumOfArgs(args, 2); //args = rm [file name]
                 rmFile2Stage(args);
                 break;
             case "global-log":
-                checkNumOfArgs(args, 1);// args = global-log
+                checkNumOfArgs(args, 1); // args = global-log
                 printGlobalLog();
                 break;
             case "branch":
-                checkNumOfArgs(args, 2);//args = branch [branch name]
+                checkNumOfArgs(args, 2); //args = branch [branch name]
                 creatBranch(args);
                 break;
             case "rm-branch":
-                checkNumOfArgs(args, 2);//args = rm-branch [branch name]
+                checkNumOfArgs(args, 2); //args = rm-branch [branch name]
                 deleteBranch(args);
                 break;
             case "checkout":
@@ -68,15 +68,15 @@ public class Main {
                 checkout(args);
                 break;
             case "status":
-                checkNumOfArgs(args, 1);//args = status
+                checkNumOfArgs(args, 1); //args = status
                 printStatus();
                 break;
             case "reset":
-                checkNumOfArgs(args, 2);//args = reset [commit id]
+                checkNumOfArgs(args, 2); //args = reset [commit id]
                 reset(args);
                 break;
             case "merge":
-                checkNumOfArgs(args, 2);//args = merge [branch name]
+                checkNumOfArgs(args, 2); //args = merge [branch name]
                 mergeBranch(args);
                 break;
             default:
@@ -114,7 +114,7 @@ public class Main {
         if (args.length == 3 && args[1].equals("--")) {
             //checkout -- [file name]
             checkoutFile(args);
-        } else if (args.length == 4&& args[2].equals("--")) {
+        } else if (args.length == 4 && args[2].equals("--")) {
             //checkout [commit id] -- [file name]
             checkoutCommitFile(args);
         } else if (args.length == 2) {
