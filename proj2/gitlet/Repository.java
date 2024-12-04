@@ -418,12 +418,7 @@ public class Repository {
         return files.isEmpty();
     }
 
-    public static List<String> getAllblobsNamesInCommits(Commit a, Commit b, Commit c) {
-        Set<String> a1 = a.getBlobs().keySet();
-        Set<String> b1 = b.getBlobs().keySet();
-        Set<String> c1 = c.getBlobs().keySet();
-        return ALLfilesName(a1,b1,c1);
-    }
+
 
 
 

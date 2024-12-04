@@ -141,9 +141,6 @@ public class Commit implements Serializable{
         return parent[1] != null;
     }
 
-    public boolean isinit() {
-        return Arrays.equals(parent, new String[2]);
-    }
 
     public String getMessage() {
         return message;
@@ -164,12 +161,29 @@ public class Commit implements Serializable{
     }
 
     public static Commit getCommitByUid(String commitUid)  {
+        if (commitUid.length() < 40 ) {
+            return getCommitByShortUid(commitUid);
+        }
         File commitFlie = join(COMMITS_DIR, commitUid);
         if (!commitFlie.exists()) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
         return readObject(commitFlie, Commit.class);
+    }
+
+    private static Commit getCommitByShortUid(String commitUid) {
+        List<String> commitUidlist = plainFilenamesIn(COMMITS_DIR);
+        for (String uid : commitUidlist) {
+            if (commitUid.equals(uid.substring(0, commitUid.length()))) {
+                File commitFlie = join(COMMITS_DIR, uid);
+                return readObject(commitFlie, Commit.class);
+            }
+
+        }
+        System.out.println("No commit with that id exists.");
+        System.exit(0);
+        return null;
     }
 
     public boolean have(String fileName) {

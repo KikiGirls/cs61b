@@ -1,7 +1,10 @@
 package gitlet;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static gitlet.Commit.*;
 import static gitlet.Repository.*;
@@ -59,13 +62,45 @@ public class log {
         printFilesNameIn(REMOVE_DIR);
         System.out.println("\n=== Modifications Not Staged For Commit ===");
         System.out.println("\n=== Untracked Files ===");
+        printUntrackedFiles();
+    }
+
+    private static void printUntrackedFiles() {
+        // Ensure file lists are non-null
+        List<String> filelist = plainFilenamesIn(CWD);
+        filelist = filelist == null ? new ArrayList<>() : filelist;
+
+        List<String> addlist = plainFilenamesIn(ADD_DIR);
+        addlist = addlist == null ? new ArrayList<>() : addlist;
+
+        List<String> removelist = plainFilenamesIn(REMOVE_DIR);
+        removelist = removelist == null ? new ArrayList<>() : removelist;
+
+        // Convert commit blobs keySet to a list
+        List<String> commitblobs = new ArrayList<>(getCurrCommit().getBlobs().keySet());
+
+        // Track already printed files
+        Set<String> printed = new HashSet<>();
+
+        for (String filename : filelist) {
+            if (!commitblobs.contains(filename) && !addlist.contains(filename) && !printed.contains(filename)) {
+                System.out.println(filename);
+                printed.add(filename);
+            }
+
+            if (removelist.contains(filename) && !printed.contains(filename)) {
+                System.out.println(filename);
+                printed.add(filename);
+            }
+        }
     }
 
     private static void printBranchName() {
-        System.out.println("*" + getCurrBranchName());
+        String currentBranchName = getCurrBranchName();
+        System.out.println("*" + currentBranchName);
         List<String> filesName = plainFilenamesIn(HEADS_DIR);
         for (String fileName : filesName) {
-            if (fileName.equals( getCurrCommitName())){
+            if (!fileName.equals(currentBranchName)) {
                 System.out.println(fileName);
             }
         }
