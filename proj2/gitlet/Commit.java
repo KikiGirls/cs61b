@@ -92,7 +92,8 @@ public class Commit implements Serializable {
         // 将 Date 转换为 ZonedDateTime
         ZonedDateTime zonedDateTime = date.toInstant().atZone(java.time.ZoneId.systemDefault());
         // 定义正确的格式化模式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy xx", Locale.US);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                "EEE MMM d HH:mm:ss yyyy xx", Locale.US);
         // 返回格式化后的字符串
         return formatter.format(zonedDateTime);
     }

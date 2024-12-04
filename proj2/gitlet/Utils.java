@@ -119,10 +119,10 @@ class Utils {
         try {
             if (file.isDirectory()) {
                 throw
-                    new IllegalArgumentException("cannot overwrite directory");
+                        new IllegalArgumentException("cannot overwrite directory");
             }
             BufferedOutputStream str =
-                new BufferedOutputStream(Files.newOutputStream(file.toPath()));
+                    new BufferedOutputStream(Files.newOutputStream(file.toPath()));
             for (Object obj : contents) {
                 if (obj instanceof byte[]) {
                     str.write((byte[]) obj);
@@ -138,11 +138,11 @@ class Utils {
 
     /** Return an object of type T read from FILE, casting it to EXPECTEDCLASS.
      *  Throws IllegalArgumentException in case of problems. */
-    static<T extends Serializable> T readObject(File file,
+    static <T extends Serializable> T readObject(File file,
                                                  Class<T> expectedClass) {
         try {
             ObjectInputStream in =
-                new ObjectInputStream(new FileInputStream(file));
+                    new ObjectInputStream(new FileInputStream(file));
             T result = expectedClass.cast(in.readObject());
             in.close();
             return result;
@@ -161,12 +161,12 @@ class Utils {
 
     /** Filter out all but plain files. */
     private static final FilenameFilter PLAIN_FILES =
-        new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return new File(dir, name).isFile();
-            }
-        };
+            new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return new File(dir, name).isFile();
+                }
+            };
 
     /** Returns a list of the names of all plain files in the directory DIR, in
      *  lexicographic order as Java Strings.  Returns null if DIR does
@@ -191,14 +191,14 @@ class Utils {
     /* OTHER FILE UTILITIES */
 
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link 、java.nio.file.Paths.get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
      *  method. */
     static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
     }
 
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link 、java.nio.file.Paths.、get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
      *  method. */
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();

@@ -134,7 +134,8 @@ public class Branch {
     //            if (GB.containsKey(fileName) && SP.containsKey(fileName)
     //            && GB.get(fileName).equals(SP.get(fileName)) &&
     //                    !CC.containsKey(fileName) && CWDhave(fileName)) {
-    //                error("There is an untracked file in the way; delete it, or add and commit it first.");
+    //                error("There is an untracked file in the way;
+    //                delete it, or add and commit it first.");
     //                System.exit(0);}
     //
     //            if (SP.containsKey(fileName)) {
@@ -307,17 +308,22 @@ public class Branch {
 
         // 获取三个提交的 Blob 映射
         HashMap<String, String> spBlobs = splitPoint.getBlobs(); // 分裂点提交
-        HashMap<String, String> branchBlobs = getCurrCommitInBranch(branchName).getBlobs(); // 分支当前提交
+        HashMap<String, String> branchBlobs = getCurrCommitInBranch(branchName).getBlobs();
+        // 分支当前提交
         HashMap<String, String> currBlobs = getCurrCommit().getBlobs(); // 当前分支提交
 
         // 收集所有文件名
-        List<String> fileNames = collectAllFileNames(spBlobs.keySet(), currBlobs.keySet(), branchBlobs.keySet());
+        List<String> fileNames
+                = collectAllFileNames(spBlobs.keySet(),
+                currBlobs.keySet(), branchBlobs.keySet());
 
         // 遍历所有文件并处理逻辑
         for (String fileName : fileNames) {
             // 检查是否有未跟踪的冲突文件
             if (hasUntrackedConflict(branchBlobs, spBlobs, currBlobs, fileName)) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.out.println("There is an untracked file in the way; "
+                        +
+                        "delete it, or add and commit it first.");
                 System.exit(0);
             }
 
@@ -334,8 +340,9 @@ public class Branch {
     }
 
     // 处理文件合并逻辑，返回是否发生冲突
-    private static boolean handleMergeCases(HashMap<String, String> spBlobs, HashMap<String, String> branchBlobs,
-                                            HashMap<String, String> currBlobs, String fileName)  {
+    private static boolean handleMergeCases(
+            HashMap<String, String> spBlobs, HashMap<String, String> branchBlobs,
+            HashMap<String, String> currBlobs, String fileName)  {
         boolean conflict = false;
 
         if (spBlobs.containsKey(fileName)) {
@@ -403,8 +410,9 @@ public class Branch {
     }
 
     // 处理分裂点不存在该文件的情况
-    private static boolean handleFileWithoutSplitPoint(HashMap<String, String> branchBlobs,
-                                                       HashMap<String, String> currBlobs, String fileName)  {
+    private static boolean handleFileWithoutSplitPoint(
+            HashMap<String, String> branchBlobs,
+            HashMap<String, String> currBlobs, String fileName)  {
         boolean conflict = false;
 
         String branchBlob = branchBlobs.get(fileName); // 分支版本
@@ -429,8 +437,9 @@ public class Branch {
     }
 
     // 检查是否存在未跟踪文件冲突
-    private static boolean hasUntrackedConflict(HashMap<String, String> branchBlobs, HashMap<String, String> spBlobs,
-                                                HashMap<String, String> currBlobs, String fileName) {
+    private static boolean hasUntrackedConflict(
+            HashMap<String, String> branchBlobs, HashMap<String, String> spBlobs,
+            HashMap<String, String> currBlobs, String fileName) {
         if (!cwdhave(fileName)) {
             return false;
         }

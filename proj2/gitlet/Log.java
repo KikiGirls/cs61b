@@ -79,7 +79,8 @@ public class Log {
         Set<String> printed = new HashSet<>();
 
         for (String filename : filelist) {
-            if (!commitblobs.contains(filename) && !addlist.contains(filename) && !printed.contains(filename)) {
+            if (!commitblobs.contains(filename)
+                    && !addlist.contains(filename) && !printed.contains(filename)) {
                 System.out.println(filename);
                 printed.add(filename);
             }

@@ -60,12 +60,14 @@ public class Repository {
     private static void setrope() {
         //        检查一下是否存在仓库
         if (GITLET_DIR.exists()) {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.out.println(
+                    "A Gitlet version-control system already exists in the current directory.");
             System.exit(0); //退出
         }
 
         //        创建文件夹初始化仓库
-        List<File> dirs = List.of(GITLET_DIR, COMMITS_DIR, STAGES_DIR, HEADS_DIR, BLOBS_DIR, ADD_DIR, REMOVE_DIR);
+        List<File> dirs = List.of(
+                GITLET_DIR, COMMITS_DIR, STAGES_DIR, HEADS_DIR, BLOBS_DIR, ADD_DIR, REMOVE_DIR);
         dirs.forEach(File::mkdirs);
         try {
             HEAD.createNewFile();
@@ -104,14 +106,17 @@ public class Repository {
                 stagingFile.delete();
             } else if (!uid.equals(currFileUid)) {
                 try {
-                    Files.copy(currFile.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(
+                            currFile.toPath(),
+                            stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         } else {
             try {
-                Files.copy(currFile.toPath(), stagingFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(currFile.toPath(), stagingFile.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -331,13 +336,17 @@ public class Repository {
         Map<String, String> currCommitBlobs = getBlobsFromCurrCommit();
         List<String> cwdFiles = getCWDFiles();
 
-        List<String> allfilesname = allfilesname(blobs.keySet(), currCommitBlobs.keySet(), cwdFiles);
+        List<String> allfilesname = allfilesname(blobs.keySet(),
+                currCommitBlobs.keySet(), cwdFiles);
         for (String fileName : allfilesname) {
 
             if (blobs.containsKey(fileName)
                     && !currCommitBlobs.containsKey(fileName)
                     && cwdFiles.contains(fileName)) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.out.println(
+                        "There is an untracked file in the way; "
+                                +
+                                "delete it, or add and commit it first.");
                 System.exit(0);
             } else if (blobs.containsKey(fileName) && currCommitBlobs.containsKey(fileName)) {
                 checkoutBlob2CWD(fileName, blobs.get(fileName));
@@ -367,18 +376,6 @@ public class Repository {
         return new ArrayList<>(allFilesSet);
     }
 
-    public static List<String> allfilesname(Set<String> blobsFiles, Set<String> currCommitFiles, Set<String> cwdFiles) {
-        // 使用一个 Set 来去重所有的文件名
-        Set<String> allFilesSet = new HashSet<>();
-
-        // 将所有文件名加入 Set（Set 自动去重）
-        allFilesSet.addAll(blobsFiles);
-        allFilesSet.addAll(currCommitFiles);
-        allFilesSet.addAll(cwdFiles);
-
-        // 将 Set 转为 List 并返回
-        return new ArrayList<>(allFilesSet);
-    }
 
 
     private static List<String> getCWDFiles() {
